@@ -1,0 +1,464 @@
+Activity,Avg_CO2_Emission(kg/day),Category
+Driving petrol car (20 km),4.6,Transport
+Driving diesel car (20 km),4.2,Transport
+Driving SUV petrol (20 km),6.2,Transport
+Driving hybrid car (20 km),2.8,Transport
+Taking bus (20 km),1.2,Transport
+Taking metro/subway (20 km),0.6,Transport
+Taking train (20 km),0.8,Transport
+Taking high-speed train (100 km),1.4,Transport
+Flying domestic (per 100 km),2.5,Transport
+Flying international (per 100 km),3.2,Transport
+Riding motorcycle (20 km),2.8,Transport
+Riding scooter/moped (20 km),1.8,Transport
+Cycling (20 km),0.0,Transport
+E-bike (20 km),0.1,Transport
+Walking (5 km),0.0,Transport
+Electric car (20 km),1.2,Transport
+Carpooling (20 km per person),1.5,Transport
+Taxi/ride-share (20 km),5.2,Transport
+Ferry/boat (10 km),2.8,Transport
+Helicopter (10 km),18.5,Transport
+Electricity usage (10 kWh),3.5,Household
+Electricity usage coal-based (10 kWh),8.2,Household
+Electricity usage renewable (10 kWh),0.2,Household
+Natural gas heating (5 m³),9.8,Household
+Oil heating (5 liters),13.2,Household
+Electric heating (10 kWh),3.5,Household
+Heat pump heating (10 kWh),1.2,Household
+Air conditioning (8 hours),2.4,Household
+Central AC (8 hours),4.8,Household
+Water heating electric (50 liters),1.8,Household
+Water heating gas (50 liters),2.2,Household
+Solar water heating (50 liters),0.1,Household
+Washing machine use (hot water),0.9,Household
+Washing machine use (cold water),0.3,Household
+Clothes dryer use,2.1,Household
+Dishwasher use (full load),0.5,Household
+Dishwasher use (half load),0.4,Household
+Refrigerator (old model),1.8,Household
+Refrigerator (energy efficient),0.6,Household
+Freezer operation,1.2,Household
+LED lighting (8 hours),0.1,Household
+CFL lighting (8 hours),0.2,Household
+Incandescent lighting (8 hours),0.4,Household
+TV watching (4 hours),0.3,Household
+Gaming console (4 hours),0.5,Household
+Desktop computer (8 hours),0.8,Household
+Laptop computer (8 hours),0.2,Household
+Charging smartphone,0.02,Household
+Swimming pool heating (electric),12.5,Household
+Hot tub use (2 hours),4.2,Household
+Lawn mowing (gas mower),2.8,Household
+Lawn mowing (electric mower),0.4,Household
+Beef consumption (200g),6.8,Food
+Lamb consumption (200g),5.9,Food
+Pork consumption (200g),2.4,Food
+Chicken consumption (200g),1.2,Food
+Turkey consumption (200g),1.8,Food
+Fish farmed (200g),1.5,Food
+Fish wild-caught (200g),1.1,Food
+Shrimp/prawns (200g),3.8,Food
+Eggs (2 eggs),0.9,Food
+Cheese (100g),2.4,Food
+Butter (50g),1.2,Food
+Dairy products (500ml milk),1.9,Food
+Yogurt (200g),0.8,Food
+Plant-based milk (500ml),0.5,Food
+Tofu (200g),0.4,Food
+Lentils/beans (200g),0.2,Food
+Rice (200g cooked),0.6,Food
+Pasta (200g cooked),0.4,Food
+Bread (4 slices),0.5,Food
+Potatoes (200g),0.1,Food
+Vegetables local (500g),0.2,Food
+Vegetables imported (500g),1.2,Food
+Fruits local (500g),0.3,Food
+Fruits imported (500g),1.5,Food
+Avocado (1 piece),0.8,Food
+Chocolate (100g),1.9,Food
+Coffee (3 cups),0.8,Food
+Tea (3 cups),0.2,Food
+Soft drinks (1 liter),0.6,Food
+Bottled water (1 liter),0.3,Food
+Beer (500ml),0.5,Food
+Wine (glass 150ml),0.4,Food
+Plant-based meal,0.5,Food
+Vegetarian meal,1.2,Food
+Fast food burger meal,3.2,Food
+Pizza delivery,2.8,Food
+Restaurant meal (meat-based),4.5,Food
+Restaurant meal (vegetarian),1.8,Food
+Takeout meal,2.9,Food
+Meal kit delivery,3.5,Food
+Online shopping delivery,2.1,Lifestyle
+Express delivery,3.8,Lifestyle
+International shipping,8.5,Lifestyle
+Streaming video HD (4 hours),0.3,Lifestyle
+Streaming video 4K (4 hours),0.6,Lifestyle
+Streaming music (4 hours),0.05,Lifestyle
+Video conferencing (2 hours),0.15,Lifestyle
+Cloud storage (100 GB),0.2,Lifestyle
+Cryptocurrency mining (1 hour),2.8,Lifestyle
+New smartphone purchase,80.0,Lifestyle
+New laptop purchase,250.0,Lifestyle
+New TV purchase,350.0,Lifestyle
+New car purchase,6000.0,Lifestyle
+Fast fashion clothing item,15.0,Lifestyle
+Sustainable clothing item,8.0,Lifestyle
+Second-hand clothing item,0.5,Lifestyle
+Leather shoes,25.0,Lifestyle
+Synthetic shoes,12.0,Lifestyle
+Cotton t-shirt,7.0,Lifestyle
+Polyester t-shirt,9.5,Lifestyle
+Newspaper daily,0.3,Lifestyle
+Magazine monthly,1.2,Lifestyle
+Book purchase,2.5,Lifestyle
+E-book purchase,0.1,Lifestyle
+Hotel stay (1 night),30.0,Lifestyle
+Camping (1 night),2.0,Lifestyle
+Gym membership usage,0.8,Lifestyle
+Home workout,0.1,Lifestyle
+Bottled water (single-use),0.3,Lifestyle
+Reusable water bottle,0.0,Lifestyle
+Plastic bag use,0.1,Lifestyle
+Reusable shopping bag,0.0,Lifestyle
+Disposable coffee cup,0.2,Lifestyle
+Reusable coffee cup,0.0,Lifestyle
+Private jet (100 km),45.0,Transport
+Cruise ship (per day),250.0,Transport
+Cargo ship freight (per ton 100km),0.8,Transport
+Freight train (per ton 100km),0.3,Transport
+Freight truck (per ton 100km),0.6,Transport
+Driving pickup truck (20 km),5.8,Transport
+Driving van (20 km),5.2,Transport
+Driving sports car (20 km),7.5,Transport
+Tram/light rail (20 km),0.7,Transport
+Cable car/gondola (5 km),0.4,Transport
+Rickshaw/tuk-tuk (10 km),1.2,Transport
+Horse riding (10 km),0.5,Transport
+Segway/e-scooter rental (5 km),0.08,Transport
+Skateboarding (5 km),0.0,Transport
+Rollerblading (5 km),0.0,Transport
+Driving in traffic (20 km),6.2,Transport
+Highway driving (20 km),3.8,Transport
+Aggressive driving (20 km),5.8,Transport
+Eco-driving (20 km),3.2,Transport
+Idling car (30 minutes),1.2,Transport
+Car wash (automated),0.8,Transport
+Car wash (manual),0.3,Transport
+Parking garage (8 hours),0.5,Transport
+Airport parking (24 hours),1.2,Transport
+Toll road usage (20 km),4.6,Transport
+Microwave use (15 minutes),0.15,Household
+Oven baking (1 hour),1.2,Household
+Stovetop cooking gas (1 hour),1.8,Household
+Stovetop cooking electric (1 hour),1.5,Household
+Induction cooking (1 hour),0.8,Household
+Slow cooker (8 hours),0.6,Household
+Pressure cooker (30 minutes),0.3,Household
+Air fryer (30 minutes),0.4,Household
+Toaster use (5 minutes),0.05,Household
+Kettle boiling (1 liter),0.12,Household
+Coffee maker (pot),0.25,Household
+Espresso machine (per cup),0.08,Household
+Blender use (5 minutes),0.03,Household
+Food processor (10 minutes),0.08,Household
+Vacuum cleaning (30 minutes),0.25,Household
+Robot vacuum (1 hour),0.15,Household
+Iron clothes (30 minutes),0.35,Household
+Hair dryer (15 minutes),0.25,Household
+Electric shaver (5 minutes),0.02,Household
+Curling iron (15 minutes),0.15,Household
+Space heater (8 hours),6.4,Household
+Electric blanket (8 hours),0.4,Household
+Ceiling fan (8 hours),0.15,Household
+Portable fan (8 hours),0.08,Household
+Dehumidifier (8 hours),1.6,Household
+Humidifier (8 hours),0.8,Household
+Air purifier (24 hours),0.9,Household
+Water filter system,0.05,Household
+Garbage disposal use,0.02,Household
+Sump pump operation,0.6,Household
+Well pump operation,1.2,Household
+Septic system operation,0.3,Household
+Home security system,0.2,Household
+Smart home devices (24 hours),0.15,Household
+WiFi router (24 hours),0.12,Household
+Modem (24 hours),0.08,Household
+Printer use (100 pages),0.3,Household
+Scanner use (30 minutes),0.05,Household
+Shredder use (15 minutes),0.08,Household
+Electric garage door (10 uses),0.05,Household
+Doorbell camera (24 hours),0.08,Household
+Smart thermostat (24 hours),0.03,Household
+Electric fireplace (4 hours),4.8,Household
+Gas fireplace (4 hours),3.2,Household
+Wood fireplace (4 hours),8.5,Household
+Pellet stove (8 hours),5.2,Household
+Sauna (1 hour),6.5,Household
+Steam room (1 hour),8.2,Household
+Jacuzzi/hot tub (1 hour),2.8,Household
+Aquarium (100 liters 24 hours),1.2,Household
+Terrarium heating (24 hours),0.8,Household
+Pet heating pad (24 hours),0.3,Household
+Electric pet door,0.02,Household
+Automatic pet feeder,0.05,Household
+Sewing machine (2 hours),0.15,Household
+Power tools (drill 1 hour),0.4,Household
+Table saw (1 hour),1.8,Household
+Circular saw (1 hour),1.2,Household
+Leaf blower electric (1 hour),0.8,Household
+Leaf blower gas (1 hour),2.2,Household
+Hedge trimmer electric (1 hour),0.5,Household
+Hedge trimmer gas (1 hour),1.5,Household
+Chainsaw electric (1 hour),1.2,Household
+Chainsaw gas (1 hour),3.5,Household
+Pressure washer electric (1 hour),1.5,Household
+Pressure washer gas (1 hour),3.8,Household
+Snow blower electric (1 hour),2.5,Household
+Snow blower gas (1 hour),6.5,Household
+Generator operation (1 hour),8.5,Household
+Solar panel system (10 kWh generated),-3.3,Household
+Wind turbine home (5 kWh generated),-1.5,Household
+Battery storage charging (10 kWh),0.5,Household
+EV home charging (50 kWh),1.5,Household
+Window AC unit (8 hours),3.2,Household
+Portable AC unit (8 hours),2.8,Household
+Evaporative cooler (8 hours),0.4,Household
+Attic fan (8 hours),0.6,Household
+Whole house fan (8 hours),0.8,Household
+Venison/game meat (200g),2.8,Food
+Duck consumption (200g),2.2,Food
+Goose consumption (200g),2.5,Food
+Rabbit consumption (200g),1.8,Food
+Bison/buffalo (200g),4.2,Food
+Ostrich meat (200g),3.5,Food
+Kangaroo meat (200g),2.8,Food
+Salmon farmed (200g),2.8,Food
+Salmon wild (200g),1.8,Food
+Tuna (200g),1.6,Food
+Cod (200g),1.2,Food
+Tilapia (200g),1.4,Food
+Catfish (200g),1.5,Food
+Trout (200g),1.3,Food
+Sardines (200g),0.8,Food
+Anchovies (200g),0.7,Food
+Mussels (200g),0.6,Food
+Oysters (200g),0.5,Food
+Clams (200g),0.7,Food
+Scallops (200g),1.2,Food
+Crab (200g),2.2,Food
+Lobster (200g),2.8,Food
+Squid/calamari (200g),1.4,Food
+Octopus (200g),1.6,Food
+Sushi meal,2.5,Food
+Sashimi meal,2.2,Food
+Poke bowl,2.8,Food
+Ceviche,1.8,Food
+Cream (100ml),1.5,Food
+Ice cream (100g),1.2,Food
+Frozen yogurt (100g),0.8,Food
+Sour cream (100g),1.1,Food
+Cottage cheese (100g),1.3,Food
+Cream cheese (100g),1.6,Food
+Mozzarella (100g),2.2,Food
+Cheddar cheese (100g),2.6,Food
+Parmesan (100g),2.8,Food
+Blue cheese (100g),2.4,Food
+Feta cheese (100g),2.1,Food
+Goat cheese (100g),2.3,Food
+Vegan cheese (100g),0.8,Food
+Almond milk (500ml),0.4,Food
+Soy milk (500ml),0.3,Food
+Oat milk (500ml),0.3,Food
+Coconut milk (500ml),0.6,Food
+Rice milk (500ml),0.5,Food
+Cashew milk (500ml),0.5,Food
+Hemp milk (500ml),0.4,Food
+Tempeh (200g),0.5,Food
+Seitan (200g),0.6,Food
+Edamame (200g),0.3,Food
+Chickpeas (200g),0.2,Food
+Black beans (200g),0.2,Food
+Kidney beans (200g),0.2,Food
+Pinto beans (200g),0.2,Food
+Navy beans (200g),0.2,Food
+Green lentils (200g),0.2,Food
+Red lentils (200g),0.2,Food
+Split peas (200g),0.2,Food
+Quinoa (200g cooked),0.5,Food
+Couscous (200g cooked),0.4,Food
+Bulgur wheat (200g cooked),0.4,Food
+Barley (200g cooked),0.4,Food
+Oats (100g),0.3,Food
+Muesli (100g),0.5,Food
+Granola (100g),0.8,Food
+Cornflakes (100g),0.6,Food
+Wheat cereal (100g),0.5,Food
+White rice (200g cooked),0.6,Food
+Brown rice (200g cooked),0.6,Food
+Basmati rice (200g cooked),0.6,Food
+Jasmine rice (200g cooked),0.6,Food
+Wild rice (200g cooked),0.5,Food
+Sushi rice (200g cooked),0.6,Food
+Risotto rice (200g cooked),0.7,Food
+White bread (4 slices),0.5,Food
+Whole wheat bread (4 slices),0.5,Food
+Sourdough bread (4 slices),0.6,Food
+Rye bread (4 slices),0.5,Food
+Bagel (1 piece),0.4,Food
+Croissant (1 piece),0.8,Food
+Muffin (1 piece),0.6,Food
+Donut (1 piece),0.7,Food
+Danish pastry (1 piece),0.8,Food
+Cookies (3 pieces),0.6,Food
+Cake slice,1.2,Food
+Brownie,0.8,Food
+Pie slice,1.1,Food
+Pancakes (3 pieces),0.9,Food
+Waffles (2 pieces),0.8,Food
+French toast (2 slices),0.7,Food
+White pasta (200g cooked),0.4,Food
+Whole wheat pasta (200g cooked),0.4,Food
+Gluten-free pasta (200g cooked),0.5,Food
+Egg noodles (200g cooked),0.6,Food
+Ramen noodles (1 pack),0.5,Food
+Instant noodles (1 pack),0.6,Food
+Spaghetti (200g cooked),0.4,Food
+Penne (200g cooked),0.4,Food
+Lasagna (1 serving),2.8,Food
+Mac and cheese (1 serving),1.8,Food
+Sweet potatoes (200g),0.1,Food
+Yams (200g),0.1,Food
+Russet potatoes (200g),0.1,Food
+Red potatoes (200g),0.1,Food
+French fries (200g),1.2,Food
+Potato chips (100g),0.8,Food
+Mashed potatoes (200g),0.4,Food
+Baked potato,0.2,Food
+Hash browns (200g),0.9,Food
+Tater tots (200g),1.0,Food
+Carrots (200g),0.1,Food
+Broccoli (200g),0.2,Food
+Cauliflower (200g),0.2,Food
+Spinach (200g),0.1,Food
+Kale (200g),0.1,Food
+Lettuce (200g),0.1,Food
+Cabbage (200g),0.1,Food
+Brussels sprouts (200g),0.2,Food
+Asparagus (200g),0.3,Food
+Green beans (200g),0.2,Food
+Peas (200g),0.2,Food
+Corn (200g),0.3,Food
+Bell peppers (200g),0.3,Food
+Tomatoes (200g),0.4,Food
+Cucumbers (200g),0.2,Food
+Zucchini (200g),0.2,Food
+Eggplant (200g),0.2,Food
+Mushrooms (200g),0.3,Food
+Onions (200g),0.2,Food
+Garlic (50g),0.1,Food
+Celery (200g),0.1,Food
+Radishes (200g),0.1,Food
+Beets (200g),0.2,Food
+Turnips (200g),0.1,Food
+Parsnips (200g),0.2,Food
+Apples (500g),0.3,Food
+Bananas (500g),0.4,Food
+Oranges (500g),0.3,Food
+Grapes (500g),0.5,Food
+Strawberries (500g),0.6,Food
+Blueberries (500g),0.8,Food
+Raspberries (500g),0.7,Food
+Blackberries (500g),0.7,Food
+Watermelon (500g),0.2,Food
+Cantaloupe (500g),0.3,Food
+Honeydew (500g),0.3,Food
+Pineapple (500g),0.5,Food
+Mango (500g),0.6,Food
+Papaya (500g),0.5,Food
+Kiwi (500g),0.7,Food
+Peaches (500g),0.4,Food
+Plums (500g),0.4,Food
+Pears (500g),0.3,Food
+Cherries (500g),0.6,Food
+Apricots (500g),0.5,Food
+Nectarines (500g),0.4,Food
+Grapefruit (500g),0.3,Food
+Lemons (500g),0.4,Food
+Limes (500g),0.4,Food
+Pomegranate (1 piece),0.5,Food
+Figs (500g),0.6,Food
+Dates (500g),0.8,Food
+Raisins (100g),0.4,Food
+Dried apricots (100g),0.5,Food
+Dried cranberries (100g),0.5,Food
+Prunes (100g),0.4,Food
+Almonds (100g),0.6,Food
+Walnuts (100g),0.5,Food
+Cashews (100g),0.7,Food
+Pecans (100g),0.6,Food
+Pistachios (100g),0.7,Food
+Peanuts (100g),0.4,Food
+Hazelnuts (100g),0.6,Food
+Macadamia nuts (100g),0.8,Food
+Brazil nuts (100g),0.7,Food
+Pine nuts (100g),0.9,Food
+Sunflower seeds (100g),0.4,Food
+Pumpkin seeds (100g),0.4,Food
+Chia seeds (100g),0.5,Food
+Flax seeds (100g),0.4,Food
+Sesame seeds (100g),0.5,Food
+Peanut butter (50g),0.3,Food
+Almond butter (50g),0.4,Food
+Nutella (50g),0.6,Food
+Jam/jelly (50g),0.2,Food
+Honey (50g),0.3,Food
+Maple syrup (50g),0.4,Food
+Agave syrup (50g),0.3,Food
+Sugar (50g),0.2,Food
+Brown sugar (50g),0.2,Food
+Artificial sweetener,0.1,Food
+Olive oil (50ml),0.4,Food
+Vegetable oil (50ml),0.5,Food
+Coconut oil (50ml),0.6,Food
+Canola oil (50ml),0.4,Food
+Avocado oil (50ml),0.5,Food
+Sesame oil (50ml),0.5,Food
+Mayonnaise (50g),0.4,Food
+Ketchup (50g),0.3,Food
+Mustard (50g),0.2,Food
+Soy sauce (50ml),0.3,Food
+Hot sauce (50ml),0.2,Food
+BBQ sauce (50g),0.3,Food
+Salad dressing (50ml),0.4,Food
+Vinegar (50ml),0.1,Food
+Salt (10g),0.05,Food
+Pepper (10g),0.1,Food
+Herbs dried (10g),0.2,Food
+Spices (10g),0.2,Food
+Vanilla extract (10ml),0.2,Food
+Baking powder (10g),0.1,Food
+Baking soda (10g),0.1,Food
+Yeast (10g),0.1,Food
+Flour white (200g),0.3,Food
+Flour whole wheat (200g),0.3,Food
+Cornstarch (50g),0.2,Food
+Cocoa powder (50g),0.4,Food
+Dark chocolate (100g),2.2,Food
+Milk chocolate (100g),2.0,Food
+White chocolate (100g),1.8,Food
+Candy bar,0.9,Food
+Gummy candy (100g),0.5,Food
+Hard candy (100g),0.4,Food
+Lollipop,0.2,Food
+Chewing gum (1 pack),0.1,Food
+Mints (1 pack),0.1,Food
+Popcorn plain (100g),0.3,Food
+Popcorn buttered (100g),0.6,Food
+Pretzels (100g),0.4,Food
+Crackers (100g),0.5,Food
+Rice cakes (100g),0.4,Food
+Granola bar,0.4,Food
+Protein bar,0.6,Food

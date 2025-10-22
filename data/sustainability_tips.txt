@@ -1,0 +1,205 @@
+=== TRANSPORT TIPS ===
+
+TIP: Switch from petrol car to electric vehicle
+CATEGORY: Transport
+EMISSION_REDUCTION: 3.4 kg CO2/day (74% reduction for 20km daily)
+DIFFICULTY: Hard
+DESCRIPTION: Electric vehicles produce significantly lower emissions, especially when charged with renewable energy. Consider the total lifecycle emissions and charging infrastructure availability.
+
+TIP: Use public transportation instead of driving
+CATEGORY: Transport
+EMISSION_REDUCTION: 3.4 kg CO2/day (74% reduction for 20km daily)
+DIFFICULTY: Easy
+DESCRIPTION: Taking the bus or train dramatically reduces your carbon footprint. Public transport is 3-4 times more efficient than driving alone.
+
+TIP: Carpool with colleagues or neighbors
+CATEGORY: Transport
+EMISSION_REDUCTION: 3.1 kg CO2/day (67% reduction for 20km daily)
+DIFFICULTY: Easy
+DESCRIPTION: Sharing rides splits emissions among passengers. Carpooling with just one other person cuts your transport emissions in half.
+
+TIP: Cycle for short distances under 5km
+CATEGORY: Transport
+EMISSION_REDUCTION: 4.6 kg CO2/day (100% reduction)
+DIFFICULTY: Medium
+DESCRIPTION: Cycling produces zero emissions and improves health. Ideal for urban commutes and short trips.
+
+TIP: Work from home when possible
+CATEGORY: Transport
+EMISSION_REDUCTION: 4.6 kg CO2/day (100% reduction on remote days)
+DIFFICULTY: Easy
+DESCRIPTION: Remote work eliminates commute emissions entirely. Even 2-3 days per week makes a significant impact.
+
+TIP: Combine errands into single trips
+CATEGORY: Transport
+EMISSION_REDUCTION: 1.5 kg CO2/day (30% reduction)
+DIFFICULTY: Easy
+DESCRIPTION: Trip chaining reduces total distance driven and cold starts, which are less efficient.
+
+TIP: Maintain proper tire pressure
+CATEGORY: Transport
+EMISSION_REDUCTION: 0.3 kg CO2/day (7% reduction)
+DIFFICULTY: Easy
+DESCRIPTION: Properly inflated tires improve fuel efficiency by 3-5%. Check monthly for optimal performance.
+
+TIP: Avoid air travel when alternatives exist
+CATEGORY: Transport
+EMISSION_REDUCTION: 2.5 kg CO2/day per 100km avoided
+DIFFICULTY: Medium
+DESCRIPTION: Flying is the most carbon-intensive transport mode. Choose trains or buses for distances under 500km.
+
+=== HOUSEHOLD TIPS ===
+
+TIP: Switch to renewable energy provider
+CATEGORY: Household
+EMISSION_REDUCTION: 3.5 kg CO2/day (100% reduction for electricity)
+DIFFICULTY: Easy
+DESCRIPTION: Many regions offer green energy plans from wind, solar, or hydro sources. Often comparable in price to conventional energy.
+
+TIP: Install solar panels
+CATEGORY: Household
+EMISSION_REDUCTION: 3.5 kg CO2/day (100% reduction for electricity)
+DIFFICULTY: Hard
+DESCRIPTION: Solar panels generate clean electricity and can pay for themselves over 7-10 years through energy savings.
+
+TIP: Improve home insulation
+CATEGORY: Household
+EMISSION_REDUCTION: 4.9 kg CO2/day (50% reduction in heating)
+DIFFICULTY: Hard
+DESCRIPTION: Better insulation reduces heating and cooling needs. Focus on attic, walls, and windows for maximum impact.
+
+TIP: Use programmable thermostat
+CATEGORY: Household
+EMISSION_REDUCTION: 2.0 kg CO2/day (20% reduction in heating/cooling)
+DIFFICULTY: Easy
+DESCRIPTION: Automatically adjust temperature when away or sleeping. Can reduce energy use by 10-20%.
+
+TIP: Replace incandescent bulbs with LED
+CATEGORY: Household
+EMISSION_REDUCTION: 0.3 kg CO2/day (75% reduction in lighting)
+DIFFICULTY: Easy
+DESCRIPTION: LEDs use 75% less energy and last 25 times longer than incandescent bulbs.
+
+TIP: Air dry clothes instead of using dryer
+CATEGORY: Household
+EMISSION_REDUCTION: 1.2 kg CO2/day
+DIFFICULTY: Easy
+DESCRIPTION: Clothes dryers are energy-intensive. Line drying is free and extends clothing life.
+
+TIP: Use cold water for laundry
+CATEGORY: Household
+EMISSION_REDUCTION: 0.4 kg CO2/day (60% reduction per load)
+DIFFICULTY: Easy
+DESCRIPTION: 90% of washing machine energy goes to heating water. Modern detergents work well in cold water.
+
+TIP: Unplug devices when not in use
+CATEGORY: Household
+EMISSION_REDUCTION: 0.5 kg CO2/day
+DIFFICULTY: Easy
+DESCRIPTION: Phantom power from standby devices accounts for 5-10% of home electricity use.
+
+TIP: Install low-flow showerheads
+CATEGORY: Household
+EMISSION_REDUCTION: 0.9 kg CO2/day (50% reduction in water heating)
+DIFFICULTY: Easy
+DESCRIPTION: Reduces hot water use without sacrificing comfort. Saves both water and energy.
+
+TIP: Use energy-efficient appliances
+CATEGORY: Household
+EMISSION_REDUCTION: 1.0 kg CO2/day
+DIFFICULTY: Medium
+DESCRIPTION: ENERGY STAR appliances use 10-50% less energy. Replace old appliances when they fail.
+
+=== FOOD TIPS ===
+
+TIP: Reduce beef consumption
+CATEGORY: Food
+EMISSION_REDUCTION: 6.3 kg CO2/day (93% reduction if switching to chicken)
+DIFFICULTY: Medium
+DESCRIPTION: Beef has the highest carbon footprint of any food. Replacing with chicken, fish, or plant proteins dramatically cuts emissions.
+
+TIP: Adopt plant-based meals several days per week
+CATEGORY: Food
+EMISSION_REDUCTION: 6.3 kg CO2/day (93% reduction per meal)
+DIFFICULTY: Medium
+DESCRIPTION: Plant-based diets have 50-75% lower carbon footprint than meat-heavy diets. Start with Meatless Mondays.
+
+TIP: Buy local and seasonal produce
+CATEGORY: Food
+EMISSION_REDUCTION: 0.8 kg CO2/day
+DIFFICULTY: Easy
+DESCRIPTION: Reduces transportation emissions and supports local farmers. Seasonal food is fresher and often cheaper.
+
+TIP: Reduce food waste
+CATEGORY: Food
+EMISSION_REDUCTION: 1.5 kg CO2/day
+DIFFICULTY: Easy
+DESCRIPTION: One-third of food is wasted globally. Plan meals, store food properly, and compost scraps.
+
+TIP: Choose plant-based milk alternatives
+CATEGORY: Food
+EMISSION_REDUCTION: 1.4 kg CO2/day (74% reduction)
+DIFFICULTY: Easy
+DESCRIPTION: Oat, soy, and almond milk have much lower emissions than dairy. Oat milk is most sustainable.
+
+TIP: Avoid fast food and processed meals
+CATEGORY: Food
+EMISSION_REDUCTION: 2.7 kg CO2/day (84% reduction)
+DIFFICULTY: Medium
+DESCRIPTION: Fast food has high emissions from meat, packaging, and transportation. Home cooking is healthier and greener.
+
+TIP: Grow your own herbs and vegetables
+CATEGORY: Food
+EMISSION_REDUCTION: 0.5 kg CO2/day
+DIFFICULTY: Medium
+DESCRIPTION: Home gardens eliminate transportation emissions and packaging. Start with easy herbs like basil and mint.
+
+TIP: Compost organic waste
+CATEGORY: Food
+EMISSION_REDUCTION: 0.8 kg CO2/day
+DIFFICULTY: Easy
+DESCRIPTION: Composting prevents methane emissions from landfills and creates nutrient-rich soil.
+
+=== LIFESTYLE TIPS ===
+
+TIP: Reduce online shopping and deliveries
+CATEGORY: Lifestyle
+EMISSION_REDUCTION: 2.1 kg CO2/day per delivery avoided
+DIFFICULTY: Easy
+DESCRIPTION: Each delivery generates emissions from packaging and transportation. Batch orders or shop locally.
+
+TIP: Buy second-hand and refurbished items
+CATEGORY: Lifestyle
+EMISSION_REDUCTION: 3.0 kg CO2/day (avoided manufacturing emissions)
+DIFFICULTY: Easy
+DESCRIPTION: Extending product life reduces manufacturing emissions. Thrift stores and online marketplaces offer great options.
+
+TIP: Repair instead of replace
+CATEGORY: Lifestyle
+EMISSION_REDUCTION: 2.5 kg CO2/day (avoided manufacturing emissions)
+DIFFICULTY: Medium
+DESCRIPTION: Repairing electronics, clothing, and appliances prevents waste and manufacturing emissions.
+
+TIP: Use reusable bags, bottles, and containers
+CATEGORY: Lifestyle
+EMISSION_REDUCTION: 0.4 kg CO2/day
+DIFFICULTY: Easy
+DESCRIPTION: Single-use plastics require energy to produce and often end up in landfills or oceans.
+
+TIP: Reduce streaming quality when possible
+CATEGORY: Lifestyle
+EMISSION_REDUCTION: 0.2 kg CO2/day (67% reduction)
+DIFFICULTY: Easy
+DESCRIPTION: Streaming in standard definition uses less data and energy than HD or 4K. Audio streaming is even better.
+
+TIP: Support renewable energy projects
+CATEGORY: Lifestyle
+EMISSION_REDUCTION: Variable (indirect impact)
+DIFFICULTY: Easy
+DESCRIPTION: Invest in or donate to renewable energy projects. Community solar programs make it accessible.
+
+TIP: Minimize paper use and go digital
+CATEGORY: Lifestyle
+EMISSION_REDUCTION: 0.3 kg CO2/day
+DIFFICULTY: Easy
+DESCRIPTION: Digital documents eliminate paper production emissions. Use e-bills, e-tickets, and digital notes.

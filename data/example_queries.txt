@@ -1,0 +1,51 @@
+# Example Queries for CO₂ Reduction AI Agent
+
+## Single Activity Queries
+
+1. I drive 20 km daily using a petrol car. How can I reduce my carbon footprint?
+
+2. I eat beef 3 times a week. What are some lower-emission alternatives?
+
+3. My household uses 15 kWh of electricity per day. How can I reduce this?
+
+4. I take a 2-hour flight every month for work. What's the environmental impact?
+
+## Comparison Queries
+
+5. What's better for the environment: driving a petrol car or taking public transport for my 15 km commute?
+
+6. Should I switch from beef to chicken or go fully vegetarian to reduce emissions?
+
+7. Compare the carbon footprint of heating with natural gas versus electric heating.
+
+8. Is it more eco-friendly to buy local produce or imported organic vegetables?
+
+## General Advice Queries
+
+9. What are the top 3 things I can do to reduce my household carbon emissions?
+
+10. How can I make my daily commute more sustainable?
+
+11. What lifestyle changes have the biggest impact on reducing CO₂ emissions?
+
+12. Give me some easy wins for reducing my carbon footprint in the kitchen.
+
+## Category-Specific Queries
+
+### Transport
+13. I'm considering buying an electric vehicle. How much CO₂ would I save compared to my current petrol car?
+
+### Household
+14. What's the carbon impact of leaving my devices on standby mode all day?
+
+### Food
+15. How does eating locally sourced food affect my carbon footprint compared to imported food?
+
+### Lifestyle
+16. I want to reduce waste in my home. What are the most effective strategies?
+
+## Dataset Analysis Queries
+
+17. Analyze my weekly activities and tell me where I can make the biggest impact.
+
+18. I've uploaded my monthly activity data. Which activities should I prioritize changing first?
