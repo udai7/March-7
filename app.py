@@ -25,7 +25,7 @@ st.set_page_config(
 )
 
 
-@st.cache(allow_output_mutation=True)
+@st.cache(allow_output_mutation=True, suppress_st_warning=True)
 def initialize_agent() -> Optional[CO2ReductionAgent]:
     """
     Initialize and cache the CO2 Reduction Agent with all components.
@@ -33,39 +33,35 @@ def initialize_agent() -> Optional[CO2ReductionAgent]:
     Returns:
         Initialized CO2ReductionAgent or None if initialization fails
     """
-    try:
-        # Initialize LLM client
-        llm_client = LLMClient(
-            model_name=config.LLM_MODEL,
-            base_url=config.LLM_BASE_URL,
-            temperature=config.LLM_TEMPERATURE,
-            max_tokens=config.LLM_MAX_TOKENS
-        )
-        
-        # Initialize vector store
-        vector_store = VectorStore(
-            collection_name="sustainability_tips",
-            persist_directory=config.VECTOR_DB_PATH,
-            embedding_model=config.EMBEDDING_MODEL
-        )
-        
-        # Initialize reference data manager
-        reference_manager = ReferenceDataManager(
-            filepath=config.REFERENCE_DATA_PATH
-        )
-        
-        # Create agent
-        agent = CO2ReductionAgent(
-            llm_client=llm_client,
-            vector_store=vector_store,
-            reference_data_manager=reference_manager
-        )
-        
-        return agent
-        
-    except Exception as e:
-        st.error(f"Failed to initialize agent: {str(e)}")
-        return None
+    # Initialize LLM client
+    llm_client = LLMClient(
+        provider=config.LLM_PROVIDER,
+        model_name=config.LLM_MODEL,
+        base_url=config.LLM_BASE_URL,
+        temperature=config.LLM_TEMPERATURE,
+        max_tokens=config.LLM_MAX_TOKENS
+    )
+    
+    # Initialize vector store
+    vector_store = VectorStore(
+        collection_name="sustainability_tips",
+        persist_directory=config.VECTOR_DB_PATH,
+        embedding_model=config.EMBEDDING_MODEL
+    )
+    
+    # Initialize reference data manager
+    reference_manager = ReferenceDataManager(
+        filepath=config.REFERENCE_DATA_PATH
+    )
+    
+    # Create agent
+    agent = CO2ReductionAgent(
+        llm_client=llm_client,
+        vector_store=vector_store,
+        reference_data_manager=reference_manager
+    )
+    
+    return agent
 
 
 def initialize_session_state():
@@ -603,15 +599,20 @@ def main():
     # Initialize session state
     initialize_session_state()
     
-    # Initialize agent
-    agent = initialize_agent()
-    
     # Header
     st.title("🌱 CO₂ Reduction AI Agent")
     st.markdown(
         "Get personalized recommendations to reduce your carbon footprint. "
         "Ask questions about your activities or upload your data for analysis."
     )
+    
+    # Initialize agent with error handling
+    try:
+        agent = initialize_agent()
+    except Exception as e:
+        st.error(f"❌ Failed to initialize agent: {str(e)}")
+        st.info("💡 Try reinstalling dependencies: `pip install --upgrade sentence-transformers torch`")
+        st.stop()
     
     # Check system health
     if agent:

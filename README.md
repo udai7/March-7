@@ -13,23 +13,70 @@ An intelligent Retrieval-Augmented Generation (RAG) system that helps individual
 
 ## Technology Stack
 
-- **LLM**: Ollama (LLaMA 3, Mistral) or Hugging Face Inference
-- **Agent Framework**: LangChain
-- **Vector Database**: ChromaDB
+- **LLM**: Groq (fastest, recommended), Ollama (local), or Hugging Face Inference
+- **Agent Framework**: Custom RAG implementation with LangChain components
+- **Vector Database**: ChromaDB with relevance filtering
 - **Embeddings**: SentenceTransformers (all-MiniLM-L6-v2)
 - **UI**: Streamlit
 - **Data Processing**: Pandas, Pydantic
+
+## ⚡ Performance Improvements
+
+This system now includes:
+
+- **10x Faster Responses**: Using Groq API for sub-second LLM inference
+- **Relevance Checking**: Automatically detects when queries are outside the knowledge base
+- **Smart Fallbacks**: Returns honest "out of scope" messages instead of hallucinated answers
+- **Optimized Vector Search**: Similarity scoring to filter irrelevant results
+
+## LLM Provider Comparison
+
+Choose the provider that best fits your needs:
+
+| Provider           | Speed  | Setup  | Cost   | Best For                             |
+| ------------------ | ------ | ------ | ------ | ------------------------------------ |
+| **Groq** ⚡        | 0.5-2s | Easy   | Free\* | Production, demos, user-facing apps  |
+| **Ollama** 🏠      | 2-10s  | Medium | Free   | Offline, unlimited requests, privacy |
+| **HuggingFace** ☁️ | 5-20s  | Easy   | Free\* | Backup, specific models              |
+
+\*Free tier with rate limits
+
+### When to Use Each
+
+**Groq (Recommended for most users)**
+
+- ✅ Blazing fast responses (10x faster)
+- ✅ No local setup required
+- ✅ Free tier: 30 requests/min
+- ❌ Requires internet connection
+- ❌ Rate limits on free tier
+
+**Ollama (Best for development/offline)**
+
+- ✅ Unlimited requests (no rate limits)
+- ✅ Works offline
+- ✅ Complete privacy (data stays local)
+- ❌ Slower responses
+- ❌ Requires local setup & RAM
+
+**HuggingFace (Backup option)**
+
+- ✅ Many models available
+- ✅ Easy setup
+- ❌ Slowest responses
+- ❌ Cold start delays
 
 ## Prerequisites
 
 Before installing, ensure you have:
 
 - **Python 3.9 or higher**
-- **Ollama** (for local LLM inference)
-  - Download from: https://ollama.ai
-  - After installation, pull a model: `ollama pull llama3` or `ollama pull mistral`
 - **Git** (for cloning the repository)
-- **4GB+ RAM** (8GB recommended for optimal performance)
+- **LLM Provider** (choose based on table above):
+  - **Groq API** (recommended) - Get free key at https://console.groq.com
+  - **Ollama** (offline/unlimited) - Download from https://ollama.ai
+  - **HuggingFace** (backup) - Get free key at https://huggingface.co
+- **4GB+ RAM** (8GB recommended, especially for Ollama)
 
 ## Installation
 
@@ -78,13 +125,71 @@ python scripts/verify_setup.py
 
 This checks that all components are properly configured.
 
-### Step 6: Run the Application
+### Step 6: Configure LLM Provider
+
+**Option A: Groq (Recommended - Fastest)**
+
+1. Get free API key from https://console.groq.com
+2. Set environment variables:
+
+```cmd
+# Windows CMD
+set GROQ_API_KEY=gsk_your_key_here
+set LLM_PROVIDER=groq
+
+# Windows PowerShell
+$env:GROQ_API_KEY="gsk_your_key_here"
+$env:LLM_PROVIDER="groq"
+
+# Linux/Mac
+export GROQ_API_KEY=gsk_your_key_here
+export LLM_PROVIDER=groq
+```
+
+3. Test setup: `python test_groq.py`
+
+See [GROQ_SETUP.md](GROQ_SETUP.md) for detailed instructions.
+
+**Option B: Ollama (Offline/Unlimited)**
+
+1. Install Ollama from https://ollama.ai
+2. Pull a model: `ollama pull llama3`
+3. Set environment variables:
+
+```cmd
+# Windows CMD
+set LLM_PROVIDER=ollama
+set LLM_MODEL=llama3
+
+# Linux/Mac
+export LLM_PROVIDER=ollama
+export LLM_MODEL=llama3
+```
+
+**Option C: HuggingFace (Backup)**
+
+1. Get free API key from https://huggingface.co
+2. Set environment variables:
+
+```cmd
+# Windows CMD
+set HUGGINGFACE_API_KEY=hf_your_key_here
+set LLM_PROVIDER=huggingface
+
+# Linux/Mac
+export HUGGINGFACE_API_KEY=hf_your_key_here
+export LLM_PROVIDER=huggingface
+```
+
+### Step 7: Run the Application
 
 ```bash
 streamlit run app.py
 ```
 
 The application will open in your default browser at `http://localhost:8501`
+
+**Note**: Make sure to set environment variables in the same terminal where you run the app!
 
 ## Quick Start with Setup Script
 
@@ -162,10 +267,25 @@ Edit `config.py` to customize settings:
 ### LLM Settings
 
 ```python
-LLM_MODEL = "llama3"  # or "mistral", "llama2", etc.
-LLM_BASE_URL = "http://localhost:11434"  # Ollama endpoint
-LLM_TEMPERATURE = 0.7  # 0.0 (deterministic) to 1.0 (creative)
-LLM_MAX_TOKENS = 500  # Maximum response length
+# Provider: "groq", "ollama", or "huggingface"
+LLM_PROVIDER = "groq"
+
+# Model names by provider:
+# Groq: "llama-3.1-8b-instant", "llama-3.1-70b-versatile", "mixtral-8x7b-32768"
+# Ollama: "llama3", "mistral", "llama2"
+# HuggingFace: "mistralai/Mistral-7B-Instruct-v0.2"
+LLM_MODEL = "llama-3.1-8b-instant"
+
+# API Keys (or use environment variables)
+GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
+HUGGINGFACE_API_KEY = os.getenv("HUGGINGFACE_API_KEY", "")
+
+# Generation settings
+LLM_TEMPERATURE = 0.3  # 0.0 (deterministic) to 1.0 (creative)
+LLM_MAX_TOKENS = 300  # Maximum response length
+
+# Relevance filtering
+RELEVANCE_THRESHOLD = 0.5  # Minimum similarity score (0.0 to 1.0)
 ```
 
 ### Vector Store Settings
@@ -229,6 +349,51 @@ co2-reduction-ai-agent/
 
 ## Troubleshooting
 
+### Issue: Slow responses (5+ seconds)
+
+**Solution:**
+
+1. **Switch to Groq** (fastest option):
+   ```cmd
+   set GROQ_API_KEY=your_key
+   set LLM_PROVIDER=groq
+   ```
+2. Test speed: `python test_groq.py`
+3. Expected: 0.5-2 second responses
+
+### Issue: "Groq API key not provided"
+
+**Solution:**
+
+1. Get free key from https://console.groq.com
+2. Set in same terminal where you run app:
+   ```cmd
+   set GROQ_API_KEY=gsk_your_key_here
+   ```
+3. Verify: `echo %GROQ_API_KEY%` (Windows) or `echo $GROQ_API_KEY` (Linux/Mac)
+
+### Issue: Rate limit exceeded (Groq)
+
+**Solution:**
+
+1. Free tier: 30 requests/minute
+2. Wait 60 seconds, or
+3. Switch to Ollama for unlimited requests:
+   ```cmd
+   set LLM_PROVIDER=ollama
+   ```
+
+### Issue: Getting irrelevant answers
+
+**Solution:**
+
+1. System now detects irrelevant queries automatically
+2. Adjust threshold in `config.py`:
+   ```python
+   RELEVANCE_THRESHOLD = 0.6  # Stricter (0.4 = more lenient)
+   ```
+3. Reinitialize vector store: `python scripts/init_vector_store.py`
+
 ### Issue: "Ollama service not available"
 
 **Solution:**
@@ -255,15 +420,26 @@ co2-reduction-ai-agent/
 2. Check that `chroma_db/` directory exists
 3. Verify `data/sustainability_tips.txt` exists
 
-### Issue: Slow response times
+### Issue: Want to switch providers
 
 **Solution:**
 
-1. Use a smaller LLM model (e.g., `mistral` instead of `llama3`)
-2. Reduce `LLM_MAX_TOKENS` in config.py
-3. Reduce `RETRIEVAL_TOP_K` in config.py
-4. Ensure you have sufficient RAM (8GB+ recommended)
-5. Close other resource-intensive applications
+Just change the environment variable:
+
+```cmd
+# Switch to Groq (fastest)
+set LLM_PROVIDER=groq
+set GROQ_API_KEY=your_key
+
+# Switch to Ollama (offline/unlimited)
+set LLM_PROVIDER=ollama
+
+# Switch to HuggingFace (backup)
+set LLM_PROVIDER=huggingface
+set HUGGINGFACE_API_KEY=your_key
+```
+
+No code changes needed!
 
 ### Issue: "Invalid file format" when uploading dataset
 
@@ -316,20 +492,36 @@ Contributions are welcome! Please:
 
 [Specify your license here]
 
+## Performance Tips
+
+1. **For fastest responses**: Use Groq with `llama-3.1-8b-instant`
+2. **For unlimited requests**: Use Ollama during development
+3. **For offline work**: Use Ollama
+4. **For privacy**: Use Ollama (data stays local)
+5. **Hit rate limits?**: Switch to Ollama temporarily
+
+## Additional Documentation
+
+- [GROQ_SETUP.md](GROQ_SETUP.md) - Detailed Groq setup guide
+- [MIGRATION_GUIDE.md](MIGRATION_GUIDE.md) - Upgrade from older versions
+- [PERFORMANCE_FIXES.md](PERFORMANCE_FIXES.md) - Technical details on improvements
+
 ## Support
 
 For issues and questions:
 
 - Check the troubleshooting section above
-- Review `docs/USER_GUIDE.md` for detailed usage instructions
+- Review setup guides for your chosen provider
+- Test with `test_groq.py` or `test_huggingface.py`
 - Open an issue on GitHub
 
 ## Acknowledgments
 
 Built with open-source technologies:
 
-- Ollama for local LLM inference
-- LangChain for agent orchestration
-- ChromaDB for vector storage
-- Streamlit for the web interface
-- SentenceTransformers for embeddings
+- **Groq** for blazing-fast LLM inference
+- **Ollama** for local LLM inference
+- **ChromaDB** for vector storage
+- **Streamlit** for the web interface
+- **SentenceTransformers** for embeddings
+- **LangChain** components for RAG orchestration

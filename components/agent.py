@@ -214,16 +214,16 @@ class CO2ReductionAgent:
             AgentResponse with recommendations
         """
         # Find the activity in reference data
-        activity_name = activities[0] if activities else "unknown activity"
+        activity_name = activities[0] if activities else query  # Use full query if no activity extracted
         
         # Search for similar activities in reference data
         similar_activities = self.reference_manager.search_similar_activities(
             activity_name,
-            n=1
+            n=3  # Get top 3 matches
         )
         
         if not similar_activities:
-            # If no match found, return general advice
+            # If no match found, treat as general advice but use vector search
             return self._handle_general_advice_query(query)
         
         current_activity = similar_activities[0]
@@ -235,17 +235,17 @@ class CO2ReductionAgent:
             # Assume reference is for average distance, scale accordingly
             current_activity.emission_kg_per_day *= (distance / 10.0)  # Assume 10km baseline
         
-        # Generate recommendations
-        recommendations = self.generate_recommendations(current_activity, use_llm=True)
+        # Generate recommendations using vector store + reference data (NO LLM for speed)
+        recommendations = self.generate_recommendations(current_activity, use_llm=False)
         
         # Calculate total potential reduction
-        total_reduction = sum(rec.emission_reduction_kg for rec in recommendations)
+        total_reduction = sum(rec.emission_reduction_kg for rec in recommendations[:5])
         annual_savings = total_reduction * 365
         
         # Generate summary
         summary = self._generate_summary(
             current_activity,
-            recommendations,
+            recommendations[:5],
             query_type="single_activity"
         )
         
@@ -338,7 +338,7 @@ class CO2ReductionAgent:
     
     def _handle_general_advice_query(self, query: str) -> AgentResponse:
         """
-        Handle general advice queries.
+        Handle general advice queries with relevance checking.
         
         Args:
             query: Original query
@@ -349,50 +349,136 @@ class CO2ReductionAgent:
         # Retrieve relevant knowledge from vector store
         retrieved_docs = self.vector_store.search(query, k=5)
         
-        context = [doc.content for doc in retrieved_docs] if retrieved_docs else []
+        # Check relevance of retrieved documents
+        relevant_docs = self._filter_relevant_docs(retrieved_docs, query)
         
-        # Generate response using LLM with context
+        if not relevant_docs:
+            # No relevant information found in knowledge base - use LLM as fallback
+            return self._handle_out_of_scope_with_llm(query)
+        
+        context = [doc.content for doc in relevant_docs]
+        
+        # FAST MODE: Skip LLM, use only vector store for instant responses
+        recommendations = self._create_recommendations_from_context(context, query)
+        
+        if recommendations:
+            summary = f"Based on your question about sustainability, here are relevant recommendations from our knowledge base."
+        else:
+            # Fallback to generic recommendations
+            recommendations = self._create_generic_recommendations()
+            summary = "Here are some general recommendations for reducing your carbon footprint."
+        
+        total_reduction = sum(rec.emission_reduction_kg for rec in recommendations)
+        annual_savings = total_reduction * 365
+        
+        return AgentResponse(
+            current_emission=0.0,
+            recommendations=recommendations[:5],
+            total_potential_reduction=total_reduction,
+            annual_savings_kg=annual_savings,
+            summary=summary
+        )
+    
+    def _filter_relevant_docs(self, docs: List[Document], query: str) -> List[Document]:
+        """
+        Filter documents by relevance score to avoid irrelevant answers.
+        
+        Args:
+            docs: Retrieved documents with similarity scores
+            query: Original query
+            
+        Returns:
+            List of relevant documents above threshold
+        """
+        import config
+        
+        if not docs:
+            return []
+        
+        # Filter by similarity threshold
+        relevant = [doc for doc in docs if hasattr(doc, 'score') and doc.score >= config.RELEVANCE_THRESHOLD]
+        
+        # If no docs meet threshold, check if any are close
+        if not relevant and docs:
+            # Use top doc if it's reasonably close (relaxed threshold)
+            if hasattr(docs[0], 'score') and docs[0].score >= 0.3:
+                relevant = [docs[0]]
+        
+        return relevant
+    
+    def _handle_out_of_scope_with_llm(self, query: str) -> AgentResponse:
+        """
+        Handle queries outside knowledge base scope using LLM as fallback.
+        
+        Args:
+            query: Original query
+            
+        Returns:
+            AgentResponse with LLM-generated advice or out-of-scope message
+        """
         try:
-            if context:
-                llm_response = self.llm.generate_with_context(
-                    query=query,
-                    context=context,
-                    max_tokens=600
+            # Use LLM to generate response for out-of-scope queries
+            prompt = f"""You are a CO₂ reduction and sustainability advisor. A user asked: "{query}"
+
+Provide helpful, actionable advice to reduce carbon emissions related to their question. 
+If the question is about sustainability or environmental impact, give specific recommendations.
+If it's completely unrelated to sustainability, politely explain your scope and suggest related topics.
+
+Format your response as:
+1. Brief answer to their question (2-3 sentences)
+2. 2-3 specific actionable recommendations with estimated CO₂ impact if possible
+
+Keep it concise and practical."""
+            
+            llm_response = self.llm.generate(prompt, max_tokens=400)
+            
+            # Parse the LLM response to extract recommendations
+            recommendations = self._parse_llm_recommendations(llm_response)
+            
+            # If we got recommendations, use them
+            if recommendations:
+                total_reduction = sum(rec.emission_reduction_kg for rec in recommendations)
+                annual_savings = total_reduction * 365
+                
+                return AgentResponse(
+                    current_emission=0.0,
+                    recommendations=recommendations[:5],
+                    total_potential_reduction=total_reduction,
+                    annual_savings_kg=annual_savings,
+                    summary=llm_response
                 )
             else:
-                prompt = self.prompt_templates.general_advice_prompt(query, [])
-                llm_response = self.llm.generate(prompt, max_tokens=600)
-            
-            # Try to extract any recommendations from the response
-            recommendations = parse_llm_response(llm_response)
-            
-            # If no structured recommendations, create generic ones
-            if not recommendations:
-                recommendations = self._create_generic_recommendations()
-            
-            total_reduction = sum(rec.emission_reduction_kg for rec in recommendations)
-            annual_savings = total_reduction * 365
-            
-            return AgentResponse(
-                current_emission=0.0,  # Unknown for general advice
-                recommendations=recommendations[:5],
-                total_potential_reduction=total_reduction,
-                annual_savings_kg=annual_savings,
-                summary=llm_response
+                # Use the LLM response as summary with generic recommendations
+                generic_recs = self._create_generic_recommendations()
+                total_reduction = sum(rec.emission_reduction_kg for rec in generic_recs)
+                annual_savings = total_reduction * 365
+                
+                return AgentResponse(
+                    current_emission=0.0,
+                    recommendations=generic_recs[:3],
+                    total_potential_reduction=total_reduction,
+                    annual_savings_kg=annual_savings,
+                    summary=llm_response
+                )
+                
+        except Exception as e:
+            # If LLM fails, return the original out-of-scope message
+            summary = (
+                "I couldn't find relevant information in my sustainability knowledge base to answer your question. "
+                "I specialize in CO₂ reduction and carbon footprint advice. "
+                "Please ask about transportation, energy use, food choices, or other sustainability topics."
             )
             
-        except Exception as e:
-            # Fallback response
             recommendations = self._create_generic_recommendations()
             total_reduction = sum(rec.emission_reduction_kg for rec in recommendations)
             annual_savings = total_reduction * 365
             
             return AgentResponse(
                 current_emission=0.0,
-                recommendations=recommendations,
+                recommendations=recommendations[:3],
                 total_potential_reduction=total_reduction,
                 annual_savings_kg=annual_savings,
-                summary="Here are some general recommendations for reducing your carbon footprint."
+                summary=summary
             )
     
     def _enhance_recommendations_with_llm(
@@ -455,6 +541,107 @@ class CO2ReductionAgent:
         summary += f"saving {best_rec.emission_reduction_kg * 365:.1f} kg CO2 annually."
         
         return summary
+    
+    def _create_recommendations_from_context(
+        self,
+        context: List[str],
+        query: str
+    ) -> List[Recommendation]:
+        """
+        Create recommendations from retrieved context documents.
+        
+        Args:
+            context: List of retrieved context strings
+            query: Original user query
+            
+        Returns:
+            List of Recommendation objects based on context
+        """
+        recommendations = []
+        
+        for ctx in context[:5]:  # Use top 5 context items
+            # Parse the context to extract recommendation info
+            # Context format from sustainability_tips.txt is typically:
+            # "Title: [action]\nCategory: [category]\nDescription: [details]\nEmission Reduction: [amount]"
+            
+            lines = ctx.split('\n')
+            action = ""
+            emission_reduction = 1.0  # Default
+            difficulty = "Medium"
+            benefits = []
+            
+            for line in lines:
+                line = line.strip()
+                if line.startswith("Title:"):
+                    action = line.replace("Title:", "").strip()
+                elif line.startswith("Emission Reduction:"):
+                    # Try to extract number
+                    import re
+                    numbers = re.findall(r'\d+\.?\d*', line)
+                    if numbers:
+                        emission_reduction = float(numbers[0])
+                elif line.startswith("Difficulty:"):
+                    difficulty = line.replace("Difficulty:", "").strip()
+                elif line.startswith("Additional Benefits:"):
+                    benefits_text = line.replace("Additional Benefits:", "").strip()
+                    benefits = [b.strip() for b in benefits_text.split(',')]
+            
+            if action:
+                recommendations.append(Recommendation(
+                    action=action,
+                    emission_reduction_kg=emission_reduction,
+                    reduction_percentage=20.0,  # Estimate
+                    implementation_difficulty=difficulty,
+                    timeframe="Short-term",
+                    additional_benefits=benefits if benefits else ["Environmental impact"]
+                ))
+        
+        # If we couldn't parse any recommendations, return generic ones
+        if not recommendations:
+            return self._create_generic_recommendations()
+        
+        return recommendations
+    
+    def _parse_llm_recommendations(self, llm_response: str) -> List[Recommendation]:
+        """
+        Parse LLM response to extract recommendations.
+        
+        Args:
+            llm_response: Raw LLM response text
+            
+        Returns:
+            List of Recommendation objects parsed from response
+        """
+        recommendations = []
+        
+        # Try to extract numbered recommendations
+        import re
+        lines = llm_response.split('\n')
+        
+        for line in lines:
+            line = line.strip()
+            # Look for numbered items or bullet points
+            if re.match(r'^[\d\-\*\•]+[\.\)]\s+', line):
+                # Extract the recommendation text
+                action = re.sub(r'^[\d\-\*\•]+[\.\)]\s+', '', line).strip()
+                
+                # Try to extract emission reduction if mentioned
+                emission_reduction = 0.5  # Default
+                numbers = re.findall(r'(\d+(?:\.\d+)?)\s*(?:kg|kilogram)', action.lower())
+                if numbers:
+                    emission_reduction = float(numbers[0])
+                
+                if action and len(action) > 10:  # Valid recommendation
+                    recommendations.append(Recommendation(
+                        action=action,
+                        emission_reduction_kg=emission_reduction,
+                        reduction_percentage=15.0,
+                        implementation_difficulty="Medium",
+                        timeframe="Short-term",
+                        additional_benefits=["Environmental impact"]
+                    ))
+        
+        return recommendations[:5]  # Return top 5
     
     def _create_generic_recommendations(self) -> List[Recommendation]:
         """

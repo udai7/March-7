@@ -4,7 +4,8 @@ langchain==0.1.9
 langchain-community==0.0.24
 
 # LLM and Embeddings
-sentence-transformers==2.3.1
+sentence-transformers==2.2.2
+torch==2.0.1
 ollama==0.1.6
 
 # Vector Database

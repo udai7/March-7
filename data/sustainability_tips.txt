@@ -203,3 +203,139 @@ CATEGORY: Lifestyle
 EMISSION_REDUCTION: 0.3 kg CO2/day
 DIFFICULTY: Easy
 DESCRIPTION: Digital documents eliminate paper production emissions. Use e-bills, e-tickets, and digital notes.
+
+
+---
+Title: Use eco-friendly alternatives to firecrackers during festivals
+Category: Lifestyle
+Description: Traditional firecrackers release significant CO₂, particulate matter, and toxic chemicals. Switch to eco-friendly celebrations like LED lights, laser shows, or green crackers that produce 30% less emissions. Consider celebrating with diyas (oil lamps), rangoli, community events, or donating to environmental causes instead.
+Emission Reduction: 2-5 kg CO₂ per festival celebration
+Difficulty: Easy
+Timeframe: Immediate
+Additional Benefits: Reduces air pollution, noise pollution, safer for children and pets, cost savings
+
+---
+Title: Reduce junk food and processed food consumption
+Category: Food
+Description: Processed and junk foods have high carbon footprints due to packaging, processing, and transportation. Ultra-processed foods can have 3-4x higher emissions than whole foods. Replace with fresh, whole foods, home-cooked meals, and local produce. Reduce fast food consumption and cook in batches to save time.
+Emission Reduction: 1.5-3 kg CO₂/day
+Difficulty: Medium
+Timeframe: Short-term
+Additional Benefits: Better health, weight management, cost savings, improved nutrition
+
+---
+Title: Choose green crackers or skip fireworks entirely
+Category: Lifestyle
+Description: If you must use crackers, choose green crackers certified by CSIR that produce 30% less emissions and no harmful chemicals. Better yet, celebrate with light shows, music, community gatherings, or donate the money saved to environmental causes.
+Emission Reduction: 3-6 kg CO₂ per celebration
+Difficulty: Easy
+Timeframe: Immediate
+Additional Benefits: Cleaner air, reduced noise, safer celebrations, community bonding
+
+---
+Title: Replace packaged snacks with homemade alternatives
+Category: Food
+Description: Packaged snacks have high emissions from processing, packaging, and transport. Make snacks at home using bulk ingredients. Choose fresh fruits, nuts, homemade popcorn, or energy balls instead of chips and cookies.
+Emission Reduction: 0.8-1.5 kg CO₂/day
+Difficulty: Easy
+Timeframe: Immediate
+Additional Benefits: Healthier options, cost savings, less plastic waste, better taste
+
+---
+Title: Reduce takeout and food delivery orders
+Category: Food
+Description: Food delivery has high emissions from packaging, transport, and often includes processed foods. Cook at home, meal prep on weekends, or pick up food yourself to reduce emissions by 60-70%.
+Emission Reduction: 1.5-2.5 kg CO₂/day
+Difficulty: Medium
+Timeframe: Short-term
+Additional Benefits: Cost savings, healthier eating, less packaging waste
+
+---
+Title: Celebrate festivals with sustainable decorations
+Category: Lifestyle
+Description: Use reusable decorations, natural materials like flowers and leaves, LED lights instead of traditional bulbs, and avoid single-use plastic decorations. Make decorations from recycled materials or rent them.
+Emission Reduction: 0.5-1.5 kg CO₂ per festival
+Difficulty: Easy
+Timeframe: Immediate
+Additional Benefits: Cost savings, less waste, creative activities, reusable for years
+
+---
+Title: Choose plant-based fast food options
+Category: Food
+Description: When eating fast food, choose plant-based options like veggie burgers, salads, or bean burritos instead of beef burgers. This can reduce emissions by 50-70% per meal.
+Emission Reduction: 2-3 kg CO₂ per meal
+Difficulty: Easy
+Timeframe: Immediate
+Additional Benefits: Healthier option, often cheaper, supports sustainable food systems
+
+---
+Title: Reduce soft drink and bottled beverage consumption
+Category: Food
+Description: Bottled beverages have high emissions from production, bottling, and transport. Drink tap water with a filter, make homemade drinks, or use a soda maker. Each liter of bottled soda produces about 0.6 kg CO₂.
+Emission Reduction: 0.3-0.8 kg CO₂/day
+Difficulty: Easy
+Timeframe: Immediate
+Additional Benefits: Better health, significant cost savings, less plastic waste
+
+---
+Title: Buy snacks and dry goods in bulk
+Category: Food
+Description: Buying in bulk reduces packaging waste and transport emissions per unit. Use reusable containers and buy from bulk bins. This works well for nuts, grains, dried fruits, and snacks.
+Emission Reduction: 0.4-0.8 kg CO₂/day
+Difficulty: Easy
+Timeframe: Short-term
+Additional Benefits: Cost savings, less packaging waste, fresher products
+
+---
+Title: Organize community celebrations instead of individual ones
+Category: Lifestyle
+Description: Share festival celebrations with neighbors or community. Pool resources for decorations, food, and entertainment. This reduces per-person emissions by 60-80% while creating stronger community bonds.
+Emission Reduction: 3-8 kg CO₂ per celebration
+Difficulty: Medium
+Timeframe: Short-term
+Additional Benefits: Community building, cost sharing, more fun, reduced waste
+
+---
+Title: Use digital greetings instead of physical cards
+Category: Lifestyle
+Description: Physical greeting cards have emissions from paper production, printing, and delivery. Send e-cards, video messages, or make phone calls instead. Each physical card produces about 0.2 kg CO₂.
+Emission Reduction: 0.1-0.3 kg CO₂ per occasion
+Difficulty: Easy
+Timeframe: Immediate
+Additional Benefits: Instant delivery, cost savings, can include photos/videos, no waste
+
+---
+Title: Choose sustainable gift wrapping
+Category: Lifestyle
+Description: Use reusable fabric wraps, newspaper, brown paper, or skip wrapping entirely. Avoid plastic-based wrapping paper and ribbons. Each gift wrapped sustainably saves about 0.3 kg CO₂.
+Emission Reduction: 0.2-0.5 kg CO₂ per gift
+Difficulty: Easy
+Timeframe: Immediate
+Additional Benefits: Unique presentation, cost savings, less waste, creative options
+
+---
+Title: Reduce impulse online shopping
+Category: Lifestyle
+Description: Each online order has emissions from packaging and delivery. Batch your orders, choose slower shipping, or buy from local stores. Wait 24 hours before purchasing to avoid impulse buys.
+Emission Reduction: 1-3 kg CO₂/week
+Difficulty: Medium
+Timeframe: Immediate
+Additional Benefits: Save money, reduce clutter, less packaging waste, more mindful consumption
+
+---
+Title: Choose experiences over material gifts
+Category: Lifestyle
+Description: Give experiences like concert tickets, cooking classes, or outdoor activities instead of physical gifts. Experiences have 80-90% lower emissions than manufactured goods.
+Emission Reduction: 5-15 kg CO₂ per gift
+Difficulty: Easy
+Timeframe: Immediate
+Additional Benefits: Creates memories, no clutter, often more appreciated, supports local businesses
+
+---
+Title: Repair and reuse items instead of buying new
+Category: Lifestyle
+Description: Repair broken items, repurpose old things, or buy second-hand. Manufacturing new products has high emissions. Repairing saves 90-95% of emissions compared to buying new.
+Emission Reduction: 2-10 kg CO₂ per item
+Difficulty: Medium
+Timeframe: Short-term
+Additional Benefits: Cost savings, develops skills, reduces waste, unique items

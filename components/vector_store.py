@@ -72,9 +72,15 @@ class VectorStore:
         )
         
         # Create or get collection with embedding function
-        self.embedding_function = embedding_functions.SentenceTransformerEmbeddingFunction(
-            model_name=embedding_model
-        )
+        try:
+            # Try to use SentenceTransformer embedding function
+            self.embedding_function = embedding_functions.SentenceTransformerEmbeddingFunction(
+                model_name=embedding_model
+            )
+        except Exception as e:
+            # Fallback to default embedding function if sentence_transformers not available
+            print(f"Warning: Could not load SentenceTransformer, using default embeddings: {e}")
+            self.embedding_function = embedding_functions.DefaultEmbeddingFunction()
         
         self.collection = self.client.get_or_create_collection(
             name=collection_name,
@@ -127,7 +133,7 @@ class VectorStore:
             filter_metadata: Optional metadata filters (e.g., {"category": "Transport"})
             
         Returns:
-            List of Document objects ranked by relevance
+            List of Document objects ranked by relevance with similarity scores
         """
         if not query or not query.strip():
             return []
@@ -136,10 +142,11 @@ class VectorStore:
         results = self.collection.query(
             query_texts=[query],
             n_results=k,
-            where=filter_metadata
+            where=filter_metadata,
+            include=["documents", "metadatas", "distances"]
         )
         
-        # Convert results to Document objects
+        # Convert results to Document objects with similarity scores
         documents = []
         if results and results['ids'] and results['ids'][0]:
             for i in range(len(results['ids'][0])):
@@ -148,6 +155,15 @@ class VectorStore:
                     metadata=results['metadatas'][0][i] if results['metadatas'] else {},
                     doc_id=results['ids'][0][i]
                 )
+                # ChromaDB returns distances (lower is better), convert to similarity (higher is better)
+                # Distance is L2 distance, convert to similarity score between 0 and 1
+                if results.get('distances') and results['distances'][0]:
+                    distance = results['distances'][0][i]
+                    # Convert distance to similarity: similarity = 1 / (1 + distance)
+                    doc.score = 1.0 / (1.0 + distance)
+                else:
+                    doc.score = 0.5  # Default if no distance available
+                
                 documents.append(doc)
         
         return documents
