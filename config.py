@@ -23,7 +23,7 @@ LLM_TEMPERATURE = float(os.getenv("LLM_TEMPERATURE", "0.3"))  # Lower for faster
 LLM_MAX_TOKENS = int(os.getenv("LLM_MAX_TOKENS", "300"))  # Reduced for faster generation
 
 # Relevance Settings
-RELEVANCE_THRESHOLD = float(os.getenv("RELEVANCE_THRESHOLD", "0.5"))  # Minimum similarity score to consider relevant
+RELEVANCE_THRESHOLD = float(os.getenv("RELEVANCE_THRESHOLD", "0.3"))  # Minimum similarity score to consider relevant (lowered for better coverage)
 MIN_RELEVANT_DOCS = int(os.getenv("MIN_RELEVANT_DOCS", "1"))  # Minimum relevant docs needed to answer
 
 # Vector Store Settings

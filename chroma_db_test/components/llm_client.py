@@ -6,6 +6,13 @@ import time
 from typing import List, Optional, Dict, Any
 import config
 
+# Import HF Inference Client
+try:
+    from huggingface_hub import InferenceClient
+    HF_CLIENT_AVAILABLE = True
+except ImportError:
+    HF_CLIENT_AVAILABLE = False
+
 
 class LLMClient:
     """Client for interacting with LLM services (Ollama, Hugging Face, or Groq)"""
@@ -175,65 +182,47 @@ class LLMClient:
         max_tokens: int,
         temperature: float
     ) -> str:
-        """Generate using Hugging Face Inference API"""
-        if not self.api_key:
-            raise RuntimeError("Hugging Face API key not provided. Set HUGGINGFACE_API_KEY in config.")
+        """Generate using Hugging Face - LOCAL model execution"""
         
-        headers = {
-            "Authorization": f"Bearer {self.api_key}",
-            "Content-Type": "application/json"
-        }
-        
-        payload = {
-            "inputs": prompt,
-            "parameters": {
-                "max_new_tokens": max_tokens,
-                "temperature": temperature,
-                "return_full_text": False
-            }
-        }
-        
-        last_error = None
-        for attempt in range(self.max_retries):
-            try:
-                response = requests.post(
-                    self.generate_endpoint,
-                    headers=headers,
-                    json=payload,
-                    timeout=30  # HF is faster
-                )
-                
-                if response.status_code == 200:
-                    result = response.json()
-                    # HF returns a list of generated texts
-                    if isinstance(result, list) and len(result) > 0:
-                        return result[0].get('generated_text', '').strip()
-                    elif isinstance(result, dict):
-                        return result.get('generated_text', '').strip()
-                    return str(result).strip()
-                elif response.status_code == 503:
-                    # Model is loading, wait and retry
-                    last_error = "Model is loading, please wait..."
-                    time.sleep(20)  # Wait for model to load
-                    continue
-                else:
-                    last_error = f"HTTP {response.status_code}: {response.text}"
-                    
-            except requests.exceptions.Timeout:
-                last_error = "Request timeout"
-            except requests.exceptions.RequestException as e:
-                last_error = f"Request error: {str(e)}"
-            except Exception as e:
-                last_error = f"Unexpected error: {str(e)}"
+        # HF Serverless Inference API is no longer free/available
+        # We need to run models locally using transformers
+        try:
+            from transformers import pipeline
+            import torch
             
-            if attempt < self.max_retries - 1:
-                delay = self.retry_delay * (2 ** attempt)
-                time.sleep(delay)
-        
-        raise RuntimeError(
-            f"Failed to generate response after {self.max_retries} attempts. "
-            f"Last error: {last_error}"
-        )
+            # Use a small, fast model that can run on CPU
+            # Initialize pipeline (cached after first use)
+            if not hasattr(self, '_hf_pipeline'):
+                print("Loading HF model locally (first time only, will be cached)...")
+                self._hf_pipeline = pipeline(
+                    "text-generation",
+                    model="distilgpt2",  # Small, fast model for CPU
+                    device=-1  # CPU
+                )
+            
+            # Generate response
+            result = self._hf_pipeline(
+                prompt,
+                max_new_tokens=max_tokens,
+                temperature=temperature,
+                do_sample=True,
+                pad_token_id=50256
+            )
+            
+            generated_text = result[0]['generated_text']
+            # Remove the prompt from the response
+            if generated_text.startswith(prompt):
+                generated_text = generated_text[len(prompt):].strip()
+            
+            return generated_text
+            
+        except ImportError:
+            raise RuntimeError(
+                "transformers and torch not installed. Run:\n"
+                "pip install transformers torch"
+            )
+        except Exception as e:
+            raise RuntimeError(f"HF local generation failed: {str(e)}")
     
     def _generate_groq(
         self,

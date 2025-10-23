@@ -1,0 +1,22 @@
+Activity,Avg_CO2_Emission(kg/day),Category
+Driving diesel car,1.24,Transport
+Riding electric scooter,3.02,Transport
+Taking a train,3.32,Transport
+Flying short distance,2.74,Transport
+Walking,4.98,Transport
+Eating fish,4.4,Food
+Drinking milk,0.7,Food
+Eating eggs,2.22,Food
+Eating processed food,3.85,Food
+Eating fruits,4.21,Food
+Using television,3.6,Household
+Boiling water,1.49,Household
+Running a dishwasher,2.39,Household
+Using ceiling fan,2.57,Household
+Ironing clothes,1.57,Household
+Using electric heater,4.63,Energy
+Charging laptop,4.69,Energy
+Using refrigerator,2.32,Energy
+Using induction stove,2.23,Energy
+Using microwave,1.31,Energy
+Platic Bag,0.1,Everyday

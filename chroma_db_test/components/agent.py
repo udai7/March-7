@@ -96,7 +96,7 @@ class CO2ReductionAgent:
     
     def analyze_dataset(self, df: pd.DataFrame) -> DatasetAnalysis:
         """
-        Process uploaded CSV/Excel files and generate analysis.
+        Process uploaded CSV/Excel files and generate analysis with LLM fallback.
         
         Args:
             df: DataFrame with activity data
@@ -110,27 +110,34 @@ class CO2ReductionAgent:
         # Step 1: Analyze the dataset
         analysis = self.dataset_analyzer.analyze_dataset(df)
         
-        # Step 2: Generate recommendations for top emitters
-        recommendations = self.recommendation_generator.generate_recommendations_for_multiple(
-            analysis.top_emitters,
-            max_per_activity=2
+        # Step 2: Check if we have unknown/unusual categories that need LLM help
+        has_unknown_categories = any(
+            activity.category == Category.LIFESTYLE and 
+            any(keyword in activity.name.lower() for keyword in ['energy', 'electric', 'power', 'charge'])
+            for activity in analysis.top_emitters
         )
         
-        # Step 3: Enhance recommendations with LLM insights
-        if recommendations:
-            # Get top 3 recommendations
-            top_recommendations = recommendations[:3]
-            
-            # Optionally enhance with LLM-generated insights
+        # Step 3: Generate recommendations
+        if has_unknown_categories or len(analysis.top_emitters) == 0:
+            # Use LLM-based recommendations for unknown categories
+            recommendations = self._generate_llm_recommendations_for_dataset(analysis)
+        else:
+            # Use reference data recommendations
+            recommendations = self.recommendation_generator.generate_recommendations_for_multiple(
+                analysis.top_emitters,
+                max_per_activity=2
+            )
+        
+        # Step 4: Enhance recommendations with LLM insights if we have good base recommendations
+        if recommendations and not has_unknown_categories:
             try:
                 enhanced_recs = self._enhance_recommendations_with_llm(
                     analysis.top_emitters,
-                    top_recommendations
+                    recommendations[:3]
                 )
                 if enhanced_recs:
                     recommendations = enhanced_recs + recommendations[3:]
             except Exception:
-                # If LLM enhancement fails, use original recommendations
                 pass
         
         # Update analysis with recommendations
@@ -203,7 +210,7 @@ class CO2ReductionAgent:
         parameters: Dict[str, Any]
     ) -> AgentResponse:
         """
-        Handle queries about a single activity.
+        Handle queries about a single activity using RAG approach.
         
         Args:
             query: Original query
@@ -213,17 +220,67 @@ class CO2ReductionAgent:
         Returns:
             AgentResponse with recommendations
         """
-        # Find the activity in reference data
-        activity_name = activities[0] if activities else query  # Use full query if no activity extracted
+        # Try multiple search strategies to find the activity
+        similar_activities = []
+        query_lower = query.lower()
         
-        # Search for similar activities in reference data
-        similar_activities = self.reference_manager.search_similar_activities(
-            activity_name,
-            n=3  # Get top 3 matches
-        )
+        # Strategy 1: Try key transport/household/food keywords from query FIRST (most reliable)
+        search_terms = []
         
+        # Extract key terms based on query content
+        if any(word in query_lower for word in ['drive', 'driving', 'car', 'vehicle']):
+            search_terms.append('driving car')
+        if any(word in query_lower for word in ['bus']):
+            search_terms.append('bus')
+        if any(word in query_lower for word in ['train', 'metro', 'subway']):
+            search_terms.append('train')
+        if any(word in query_lower for word in ['bike', 'bicycle', 'cycling']):
+            search_terms.append('cycling')
+        if any(word in query_lower for word in ['walk', 'walking']):
+            search_terms.append('walking')
+        if any(word in query_lower for word in ['flight', 'fly', 'airplane', 'plane']):
+            search_terms.append('flying')
+        if any(word in query_lower for word in ['electric', 'electricity', 'power']):
+            search_terms.append('electricity')
+        if any(word in query_lower for word in ['meat', 'beef', 'chicken', 'pork']):
+            search_terms.append('meat')
+        if any(word in query_lower for word in ['heating', 'heat']):
+            search_terms.append('heating')
+        if any(word in query_lower for word in ['shower', 'bath', 'water']):
+            search_terms.append('water')
+        
+        for term in search_terms:
+            similar = self.reference_manager.search_similar_activities(
+                term,
+                n=3,
+                cutoff=0.3
+            )
+            if similar:
+                similar_activities = similar
+                break
+        
+        # Strategy 2: Try extracted activities (only if Strategy 1 didn't work)
+        if not similar_activities and activities:
+            for activity_name in activities:
+                similar = self.reference_manager.search_similar_activities(
+                    activity_name,
+                    n=3,
+                    cutoff=0.4
+                )
+                if similar:
+                    similar_activities = similar
+                    break
+        
+        # Strategy 3: If still no match, use the full query
         if not similar_activities:
-            # If no match found, treat as general advice but use vector search
+            similar_activities = self.reference_manager.search_similar_activities(
+                query,
+                n=3,
+                cutoff=0.3
+            )
+        
+        # If still no match found, treat as general advice with RAG
+        if not similar_activities:
             return self._handle_general_advice_query(query)
         
         current_activity = similar_activities[0]
@@ -235,23 +292,53 @@ class CO2ReductionAgent:
             # Assume reference is for average distance, scale accordingly
             current_activity.emission_kg_per_day *= (distance / 10.0)  # Assume 10km baseline
         
-        # Generate recommendations using vector store + reference data (NO LLM for speed)
-        recommendations = self.generate_recommendations(current_activity, use_llm=False)
+        # Retrieve relevant context from vector store
+        retrieved_docs = self.vector_store.search(query, k=3)
+        context = [doc.content for doc in retrieved_docs] if retrieved_docs else []
         
-        # Calculate total potential reduction
-        total_reduction = sum(rec.emission_reduction_kg for rec in recommendations[:5])
-        annual_savings = total_reduction * 365
-        
-        # Generate summary
-        summary = self._generate_summary(
-            current_activity,
-            recommendations[:5],
-            query_type="single_activity"
-        )
+        # Generate recommendations using LLM with context (RAG approach)
+        try:
+            # Build prompt with activity info and context
+            prompt = f"""You are a CO₂ reduction advisor. A user is asking about: "{query}"
+
+Current Activity: {current_activity.name}
+Current CO₂ Emission: {current_activity.emission_kg_per_day} kg/day
+Category: {current_activity.category.value}
+
+Based on the following sustainability knowledge, provide 3-5 specific, actionable recommendations to reduce their carbon footprint:
+
+"""
+            if context:
+                prompt += "\n".join([f"Context {i+1}: {ctx}" for i, ctx in enumerate(context)])
+            
+            prompt += "\n\nProvide recommendations in this format:\n1. [Action] - [Brief explanation]\n2. [Action] - [Brief explanation]\n..."
+            
+            llm_response = self.llm.generate(prompt, max_tokens=500, temperature=0.4)
+            
+            # Parse recommendations
+            recommendations = self._parse_llm_recommendations(llm_response)
+            
+            # If parsing failed, fall back to reference data recommendations
+            if not recommendations:
+                recommendations = self.generate_recommendations(current_activity, use_llm=False)
+            
+            total_reduction = sum(rec.emission_reduction_kg for rec in recommendations[:5])
+            annual_savings = total_reduction * 365
+            
+            # Use LLM response as summary
+            summary = llm_response
+            
+        except Exception as e:
+            # Fall back to non-LLM approach
+            print(f"LLM generation failed: {str(e)}")
+            recommendations = self.generate_recommendations(current_activity, use_llm=False)
+            total_reduction = sum(rec.emission_reduction_kg for rec in recommendations[:5])
+            annual_savings = total_reduction * 365
+            summary = self._generate_summary(current_activity, recommendations[:5], query_type="single_activity")
         
         return AgentResponse(
             current_emission=current_activity.emission_kg_per_day,
-            recommendations=recommendations[:5],  # Top 5 recommendations
+            recommendations=recommendations[:5],
             total_potential_reduction=total_reduction,
             annual_savings_kg=annual_savings,
             summary=summary
@@ -338,46 +425,71 @@ class CO2ReductionAgent:
     
     def _handle_general_advice_query(self, query: str) -> AgentResponse:
         """
-        Handle general advice queries with relevance checking.
+        Handle general advice queries using RAG (Retrieval-Augmented Generation).
         
         Args:
             query: Original query
             
         Returns:
-            AgentResponse with general advice
+            AgentResponse with LLM-generated advice based on retrieved context
         """
-        # Retrieve relevant knowledge from vector store
+        # Step 1: Retrieve relevant knowledge from vector store
         retrieved_docs = self.vector_store.search(query, k=5)
         
-        # Check relevance of retrieved documents
-        relevant_docs = self._filter_relevant_docs(retrieved_docs, query)
+        # Step 2: Always use LLM with retrieved context (RAG approach)
+        context = [doc.content for doc in retrieved_docs] if retrieved_docs else []
         
-        if not relevant_docs:
-            # No relevant information found in knowledge base - use LLM as fallback
-            return self._handle_out_of_scope_with_llm(query)
-        
-        context = [doc.content for doc in relevant_docs]
-        
-        # FAST MODE: Skip LLM, use only vector store for instant responses
-        recommendations = self._create_recommendations_from_context(context, query)
-        
-        if recommendations:
-            summary = f"Based on your question about sustainability, here are relevant recommendations from our knowledge base."
-        else:
-            # Fallback to generic recommendations
-            recommendations = self._create_generic_recommendations()
-            summary = "Here are some general recommendations for reducing your carbon footprint."
-        
-        total_reduction = sum(rec.emission_reduction_kg for rec in recommendations)
-        annual_savings = total_reduction * 365
-        
-        return AgentResponse(
-            current_emission=0.0,
-            recommendations=recommendations[:5],
-            total_potential_reduction=total_reduction,
-            annual_savings_kg=annual_savings,
-            summary=summary
-        )
+        try:
+            # Use LLM to generate response with context
+            llm_response = self.llm.generate_with_context(
+                query=query,
+                context=context,
+                max_tokens=500,
+                temperature=0.4
+            )
+            
+            # Parse recommendations from LLM response
+            recommendations = self._parse_llm_recommendations(llm_response)
+            
+            # If no recommendations parsed, create some based on context
+            if not recommendations:
+                if context:
+                    recommendations = self._create_recommendations_from_context(context, query)
+                else:
+                    recommendations = self._create_generic_recommendations()
+            
+            total_reduction = sum(rec.emission_reduction_kg for rec in recommendations)
+            annual_savings = total_reduction * 365
+            
+            return AgentResponse(
+                current_emission=0.0,
+                recommendations=recommendations[:5],
+                total_potential_reduction=total_reduction,
+                annual_savings_kg=annual_savings,
+                summary=llm_response
+            )
+            
+        except Exception as e:
+            # If LLM fails, fall back to context-based recommendations
+            print(f"LLM generation failed: {str(e)}")
+            
+            if context:
+                recommendations = self._create_recommendations_from_context(context, query)
+                summary = "Based on your question about sustainability, here are relevant recommendations from our knowledge base."
+            else:
+                recommendations = self._create_generic_recommendations()
+                summary = "Here are some general recommendations for reducing your carbon footprint."
+            
+            total_reduction = sum(rec.emission_reduction_kg for rec in recommendations)
+            annual_savings = total_reduction * 365
+            
+            return AgentResponse(
+                current_emission=0.0,
+                recommendations=recommendations[:5],
+                total_potential_reduction=total_reduction,
+                annual_savings_kg=annual_savings,
+                summary=summary
+            )
     
     def _filter_relevant_docs(self, docs: List[Document], query: str) -> List[Document]:
         """
@@ -480,6 +592,73 @@ Keep it concise and practical."""
                 annual_savings_kg=annual_savings,
                 summary=summary
             )
+    
+    def _generate_llm_recommendations_for_dataset(
+        self,
+        analysis: DatasetAnalysis
+    ) -> List[Recommendation]:
+        """
+        Generate recommendations using LLM for datasets with unknown categories.
+        
+        Args:
+            analysis: DatasetAnalysis object
+            
+        Returns:
+            List of LLM-generated recommendations
+        """
+        try:
+            # Build context about the dataset
+            activities_text = "\n".join([
+                f"- {act.name}: {act.emission_kg_per_day:.2f} kg CO2/day ({act.category.value})"
+                for act in analysis.top_emitters[:5]
+            ])
+            
+            category_text = "\n".join([
+                f"- {cat}: {emission:.2f} kg CO2/day"
+                for cat, emission in analysis.category_breakdown.items()
+            ])
+            
+            # Retrieve relevant context from vector store
+            search_query = f"reduce emissions {' '.join([act.name for act in analysis.top_emitters[:3]])}"
+            retrieved_docs = self.vector_store.search(search_query, k=3)
+            context = [doc.content for doc in retrieved_docs] if retrieved_docs else []
+            
+            # Build prompt
+            prompt = f"""You are a CO₂ reduction advisor analyzing a user's carbon footprint dataset.
+
+Dataset Summary:
+- Total Daily Emission: {analysis.total_daily_emission:.2f} kg CO2/day
+- Total Annual Emission: {analysis.total_annual_emission:.2f} kg CO2/year
+
+Top Emitting Activities:
+{activities_text}
+
+Category Breakdown:
+{category_text}
+
+Based on this data and the following sustainability knowledge, provide 5 specific, actionable recommendations to reduce their carbon footprint:
+
+"""
+            if context:
+                prompt += "\n".join([f"Context {i+1}: {ctx}" for i, ctx in enumerate(context)])
+            
+            prompt += "\n\nProvide recommendations in this format:\n1. [Action] - [Brief explanation with estimated CO2 reduction]\n2. [Action] - [Brief explanation]\n..."
+            
+            llm_response = self.llm.generate(prompt, max_tokens=600, temperature=0.4)
+            
+            # Parse recommendations
+            recommendations = self._parse_llm_recommendations(llm_response)
+            
+            if not recommendations:
+                # Fallback to generic recommendations
+                recommendations = self._create_generic_recommendations()
+            
+            return recommendations
+            
+        except Exception as e:
+            print(f"LLM recommendation generation failed: {str(e)}")
+            # Fallback to generic recommendations
+            return self._create_generic_recommendations()
     
     def _enhance_recommendations_with_llm(
         self,

@@ -248,6 +248,7 @@ class DatasetAnalyzer:
     def _dataframe_to_activities(self, df: pd.DataFrame) -> List[Activity]:
         """
         Convert DataFrame to list of Activity objects.
+        Handles unknown categories by mapping them intelligently.
         
         Args:
             df: DataFrame with activity data
@@ -257,12 +258,38 @@ class DatasetAnalyzer:
         """
         activities = []
         
+        # Category mapping for common unknown categories
+        category_mapping = {
+            'Energy': 'HOUSEHOLD',  # Energy activities are household-related
+            'Utilities': 'HOUSEHOLD',
+            'Shopping': 'LIFESTYLE',
+            'Entertainment': 'LIFESTYLE',
+            'Travel': 'TRANSPORT',
+            'Commute': 'TRANSPORT',
+            'Diet': 'FOOD',
+            'Meals': 'FOOD',
+        }
+        
         for _, row in df.iterrows():
             try:
+                category_str = str(row['Category'])
+                
+                # Try to use the category directly
+                try:
+                    category = Category(category_str)
+                except ValueError:
+                    # If category is unknown, try to map it
+                    mapped_category = category_mapping.get(category_str)
+                    if mapped_category:
+                        category = Category[mapped_category]
+                    else:
+                        # Default to LIFESTYLE for truly unknown categories
+                        category = Category.LIFESTYLE
+                
                 activity = Activity(
                     name=str(row['Activity']),
                     emission_kg_per_day=float(row['Avg_CO2_Emission(kg/day)']),
-                    category=Category(row['Category'])
+                    category=category
                 )
                 activities.append(activity)
             except (ValueError, KeyError) as e:

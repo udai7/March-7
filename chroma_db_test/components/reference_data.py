@@ -138,7 +138,27 @@ class ReferenceDataManager:
 
         query_lower = query.lower()
         activity_names = list(self._activity_lookup.keys())
-        matches = get_close_matches(query_lower, activity_names, n=n, cutoff=cutoff)
+        
+        # Strategy 1: Try keyword-based matching first (more reliable)
+        keyword_matches = []
+        query_words = set(query_lower.split())
+        
+        for activity_name in activity_names:
+            activity_words = set(activity_name.split())
+            # Count how many words match
+            common_words = query_words & activity_words
+            if common_words:
+                # Calculate a simple score based on word overlap
+                score = len(common_words) / max(len(query_words), len(activity_words))
+                keyword_matches.append((activity_name, score))
+        
+        # Sort by score and take top matches
+        keyword_matches.sort(key=lambda x: x[1], reverse=True)
+        matches = [match[0] for match in keyword_matches[:n] if match[1] > 0.2]
+        
+        # Strategy 2: If no keyword matches, fall back to fuzzy matching
+        if not matches:
+            matches = get_close_matches(query_lower, activity_names, n=n, cutoff=cutoff)
 
         activities = []
         for match in matches:

@@ -105,20 +105,18 @@ class DataValidator:
             if np.isinf(emission_col).any():
                 errors.append("Emission column contains infinite values")
 
-        # Validate categories
+        # Validate categories - now more flexible, just warn about unknown categories
         if "Category" in df.columns:
-            invalid_categories = []
+            unknown_categories = []
             for idx, category in enumerate(df["Category"]):
                 if pd.notna(category) and str(category) not in self.VALID_CATEGORIES:
-                    invalid_categories.append((idx, str(category)))
+                    unknown_categories.append((idx, str(category)))
 
-            if invalid_categories:
-                invalid_list = [f"Row {idx}: '{cat}'" for idx, cat in invalid_categories[:5]]
-                error_msg = f"Invalid categories found. Valid categories are: {', '.join(self.VALID_CATEGORIES)}. "
-                error_msg += f"Examples: {', '.join(invalid_list)}"
-                if len(invalid_categories) > 5:
-                    error_msg += f" (and {len(invalid_categories) - 5} more)"
-                errors.append(error_msg)
+            if unknown_categories:
+                unique_unknown = set([cat for _, cat in unknown_categories])
+                warning_msg = f"Found {len(unknown_categories)} rows with unknown categories: {', '.join(unique_unknown)}. "
+                warning_msg += "These will be processed using AI fallback for recommendations."
+                warnings.append(warning_msg)
 
         # Validate activity names
         if "Activity" in df.columns:
@@ -180,8 +178,7 @@ class DataValidator:
         if "Category" in df_clean.columns:
             # Strip whitespace and standardize
             df_clean["Category"] = df_clean["Category"].astype(str).str.strip()
-            # Keep only valid categories
-            df_clean = df_clean[df_clean["Category"].isin(self.VALID_CATEGORIES)]
+            # Don't filter out unknown categories - let them through for AI processing
 
         # Remove duplicate activities (keep first occurrence)
         if "Activity" in df_clean.columns:

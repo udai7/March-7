@@ -75,34 +75,69 @@ class QueryProcessor:
         query_lower = query.lower()
         activities = []
         
-        # Check for transport activities
+        # Check for transport activities - extract just the keyword and nearby context
         for keyword in self.TRANSPORT_KEYWORDS:
             if keyword in query_lower:
-                # Extract context around the keyword
-                pattern = rf'\b[\w\s]*{re.escape(keyword)}[\w\s]*\b'
-                matches = re.findall(pattern, query_lower)
-                activities.extend([m.strip() for m in matches if m.strip()])
+                # Just use the keyword itself or with 1-2 words around it
+                # Find the position of the keyword
+                idx = query_lower.find(keyword)
+                if idx != -1:
+                    # Extract a small window around the keyword (max 5 words)
+                    words = query_lower.split()
+                    keyword_words = keyword.split()
+                    
+                    # Find keyword position in words
+                    for i, word in enumerate(words):
+                        if keyword_words[0] in word:
+                            # Extract 2 words before and 2 after
+                            start = max(0, i - 2)
+                            end = min(len(words), i + len(keyword_words) + 2)
+                            activity = ' '.join(words[start:end])
+                            if len(activity) < 50:  # Keep it short
+                                activities.append(activity)
+                            break
         
         # Check for household activities
         for keyword in self.HOUSEHOLD_KEYWORDS:
             if keyword in query_lower:
-                pattern = rf'\b[\w\s]*{re.escape(keyword)}[\w\s]*\b'
-                matches = re.findall(pattern, query_lower)
-                activities.extend([m.strip() for m in matches if m.strip()])
+                words = query_lower.split()
+                keyword_words = keyword.split()
+                for i, word in enumerate(words):
+                    if keyword_words[0] in word:
+                        start = max(0, i - 2)
+                        end = min(len(words), i + len(keyword_words) + 2)
+                        activity = ' '.join(words[start:end])
+                        if len(activity) < 50:
+                            activities.append(activity)
+                        break
         
         # Check for food activities
         for keyword in self.FOOD_KEYWORDS:
             if keyword in query_lower:
-                pattern = rf'\b[\w\s]*{re.escape(keyword)}[\w\s]*\b'
-                matches = re.findall(pattern, query_lower)
-                activities.extend([m.strip() for m in matches if m.strip()])
+                words = query_lower.split()
+                keyword_words = keyword.split()
+                for i, word in enumerate(words):
+                    if keyword_words[0] in word:
+                        start = max(0, i - 2)
+                        end = min(len(words), i + len(keyword_words) + 2)
+                        activity = ' '.join(words[start:end])
+                        if len(activity) < 50:
+                            activities.append(activity)
+                        break
         
         # Check for lifestyle activities
         for keyword in self.LIFESTYLE_KEYWORDS:
             if keyword in query_lower:
-                pattern = rf'\b[\w\s]*{re.escape(keyword)}[\w\s]*\b'
-                matches = re.findall(pattern, query_lower)
-                activities.extend([m.strip() for m in matches if m.strip()])
+                words = query_lower.split()
+                keyword_words = keyword.split()
+                for i, word in enumerate(words):
+                    if keyword_words[0] in word:
+                        start = max(0, i - 2)
+                        end = min(len(words), i + len(keyword_words) + 2)
+                        activity = ' '.join(words[start:end])
+                        if len(activity) < 50:
+                            activities.append(activity)
+                        break
         
         # Remove duplicates while preserving order
         seen = set()
@@ -134,27 +169,37 @@ class QueryProcessor:
             if len(activities) >= 2 or comparison_count >= 2:
                 return QueryIntent.COMPARISON
         
-        # Check for general advice intent
-        advice_count = sum(1 for keyword in self.ADVICE_KEYWORDS if keyword in query_lower)
-        if advice_count > 0:
-            return QueryIntent.GENERAL_ADVICE
-        
-        # Check for single activity intent
+        # Check for single activity intent FIRST (before general advice)
         activities = self.extract_activities(query)
         if len(activities) >= 1:
             # Check if specific parameters are mentioned (distance, frequency, etc.)
             has_parameters = self._has_numeric_parameters(query)
             if has_parameters:
-                return QueryIntent.SINGLE_ACTIVITY
-            # Even without parameters, if only one activity is clearly mentioned
-            if len(activities) == 1:
+                # Make sure it's actually about the activity, not something else
+                # Check if any transport/household/food/lifestyle keyword is present
+                has_activity_keyword = any(
+                    keyword in query_lower 
+                    for keyword in (self.TRANSPORT_KEYWORDS + self.HOUSEHOLD_KEYWORDS + 
+                                   self.FOOD_KEYWORDS + self.LIFESTYLE_KEYWORDS)
+                )
+                if has_activity_keyword:
+                    return QueryIntent.SINGLE_ACTIVITY
+            # Even without parameters, if activity is clearly mentioned
+            # Check if any transport/household/food/lifestyle keyword is present
+            has_activity_keyword = any(
+                keyword in query_lower 
+                for keyword in (self.TRANSPORT_KEYWORDS + self.HOUSEHOLD_KEYWORDS + 
+                               self.FOOD_KEYWORDS + self.LIFESTYLE_KEYWORDS)
+            )
+            if has_activity_keyword:
                 return QueryIntent.SINGLE_ACTIVITY
         
-        # If we found activities but no clear intent, default to single activity
-        if activities:
-            return QueryIntent.SINGLE_ACTIVITY
+        # Check for general advice intent
+        advice_count = sum(1 for keyword in self.ADVICE_KEYWORDS if keyword in query_lower)
+        if advice_count > 0:
+            return QueryIntent.GENERAL_ADVICE
         
-        # Default to general advice if no clear pattern
+        # Default to general advice if asking about reducing emissions
         if any(word in query_lower for word in ["reduce", "lower", "help", "co2", "carbon", "emission"]):
             return QueryIntent.GENERAL_ADVICE
         

@@ -16,6 +16,7 @@ class Category(str, Enum):
     HOUSEHOLD = "Household"
     FOOD = "Food"
     LIFESTYLE = "Lifestyle"
+    ENERGY = "Energy"
 
 
 class Activity(BaseModel):
