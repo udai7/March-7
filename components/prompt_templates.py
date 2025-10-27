@@ -1,12 +1,107 @@
 """
-Prompt templates for LLM interactions
+Prompt templates for LLM interactions with enhanced accuracy constraints
 """
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 from models.data_models import Activity
 
 
 class PromptTemplates:
-    """Collection of structured prompts for different LLM tasks"""
+    """Collection of structured prompts for different LLM tasks with improved accuracy"""
+    
+    @staticmethod
+    def enhanced_recommendation_prompt(
+        activity: str,
+        emission: float,
+        category: str,
+        alternatives: List[str],
+        user_context: Optional[Dict[str, Any]] = None
+    ) -> str:
+        """
+        Generate enhanced prompt with accuracy constraints and user context.
+        
+        Args:
+            activity: Current activity name
+            emission: Current CO2 emission in kg/day
+            category: Activity category
+            alternatives: List of alternative activities from knowledge base
+            user_context: Optional user context (budget, location, etc.)
+            
+        Returns:
+            Formatted prompt string with strict accuracy requirements
+        """
+        alternatives_text = "\n".join([f"- {alt}" for alt in alternatives]) if alternatives else "No specific alternatives provided"
+        
+        context_str = ""
+        if user_context:
+            context_str = f"""
+USER CONTEXT:
+- Location: {user_context.get('location', 'Not specified')}
+- Budget: {user_context.get('budget', 'Not specified')}
+- Timeframe: {user_context.get('timeframe', 'Not specified')}
+- Lifestyle: {user_context.get('lifestyle', 'Not specified')}
+"""
+        
+        prompt = f"""You are an expert CO₂ reduction advisor. Provide accurate, data-driven recommendations based ONLY on the verified information below.
+
+{context_str}
+CURRENT ACTIVITY:
+Activity: {activity}
+Category: {category}
+Current CO₂ Emission: {emission} kg/day
+Annual Emission: {emission * 365:.1f} kg/year
+
+VERIFIED SUSTAINABILITY ALTERNATIVES:
+{alternatives_text}
+
+CRITICAL INSTRUCTIONS - ACCURACY REQUIREMENTS:
+1. Use EXACT emission values from the alternatives above
+2. Double-check ALL calculations before responding:
+   - Reduction (kg/day) = Current - Alternative
+   - Reduction % = ((Current - Alternative) / Current) × 100
+   - Annual Savings = Daily Reduction × 365
+3. Provide 3-5 alternatives ranked by CO₂ reduction impact
+4. Include specific numbers with units (kg CO₂/day, % reduction, kg/year)
+5. Consider user context when applicable
+6. Mark difficulty: Easy/Medium/Hard based on implementation complexity
+7. Specify timeframe: Immediate (<1 week)/Short-term (1-3 months)/Long-term (>3 months)
+8. Add realistic cost estimates or note "Minimal cost" / "Cost savings"
+9. List 2-4 co-benefits (health, financial savings, time, comfort, etc.)
+10. If data is insufficient, state "Limited data available" instead of guessing
+11. NEVER make up emission values - use only the provided alternatives
+
+RESPONSE FORMAT (strictly follow):
+
+**Current Activity:** {activity}
+**Current Emission:** {emission} kg CO₂/day ({emission * 365:.0f} kg/year)
+
+**Recommendations (ranked by impact):**
+
+1. **[Alternative Name]**
+   - Emission: [X.X] kg CO₂/day
+   - Reduction: [Y.Y] kg CO₂/day ([Z]% reduction)
+   - Annual Savings: [A] kg CO₂/year
+   - Cost: [Estimate or "Minimal" or "Cost savings: $X/month"]
+   - Difficulty: [Easy/Medium/Hard]
+   - Timeframe: [Immediate/Short-term/Long-term]
+   - Co-benefits: [Benefit 1], [Benefit 2], [Benefit 3]
+   - Implementation: [2-3 sentence practical steps]
+
+2. **[Alternative Name]**
+   [Same format]
+
+[Continue for remaining recommendations]
+
+**Key Insight:** [1-2 sentence summary of the most impactful action]
+
+VERIFICATION CHECKLIST (complete before responding):
+☐ All emission values from verified alternatives
+☐ Reduction percentages calculated correctly
+☐ Annual savings = daily reduction × 365
+☐ Recommendations ranked by CO₂ impact
+☐ Cost estimates realistic and helpful
+☐ Implementation steps are specific and actionable"""
+        
+        return prompt
     
     @staticmethod
     def recommendation_prompt(
@@ -16,7 +111,7 @@ class PromptTemplates:
         alternatives: List[str]
     ) -> str:
         """
-        Generate prompt for creating alternative recommendations
+        Generate prompt for creating alternative recommendations (legacy version)
         
         Args:
             activity: Current activity name
@@ -27,42 +122,10 @@ class PromptTemplates:
         Returns:
             Formatted prompt string
         """
-        alternatives_text = "\n".join([f"- {alt}" for alt in alternatives]) if alternatives else "No specific alternatives provided"
-        
-        prompt = f"""You are a CO₂ reduction advisor. A user is currently doing the following activity:
-
-Activity: {activity}
-Category: {category}
-Current CO₂ Emission: {emission} kg/day
-Annual Emission: {emission * 365:.1f} kg/year
-
-Based on the following alternative suggestions:
-{alternatives_text}
-
-Provide 3-5 specific, actionable recommendations to reduce CO₂ emissions. For each recommendation:
-1. Describe the alternative action clearly
-2. Estimate the emission reduction in kg/day
-3. Calculate the reduction percentage
-4. Specify implementation difficulty (Easy/Medium/Hard)
-5. Indicate timeframe (Immediate/Short-term/Long-term)
-6. List additional benefits (cost savings, health, etc.)
-
-Format your response as follows:
-
-RECOMMENDATION 1:
-Action: [specific action]
-Emission Reduction: [X.X kg/day]
-Reduction Percentage: [XX%]
-Difficulty: [Easy/Medium/Hard]
-Timeframe: [Immediate/Short-term/Long-term]
-Additional Benefits: [benefit 1], [benefit 2]
-
-RECOMMENDATION 2:
-[same format]
-
-Continue for all recommendations."""
-        
-        return prompt
+        # Call enhanced version with no context
+        return PromptTemplates.enhanced_recommendation_prompt(
+            activity, emission, category, alternatives, None
+        )
     
     @staticmethod
     def analysis_prompt(activities: List[Activity]) -> str:
