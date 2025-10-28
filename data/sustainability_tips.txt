@@ -2,51 +2,155 @@
 
 TIP: Switch from petrol car to electric vehicle
 CATEGORY: Transport
-EMISSION_REDUCTION: 3.4 kg CO2/day (74% reduction for 20km daily)
+CURRENT_ACTIVITY: Driving petrol car 20km
+CURRENT_EMISSION: 4.6 kg CO2/day
+ALTERNATIVE_EMISSION: 1.2 kg CO2/day
+EMISSION_REDUCTION: 3.4 kg CO2/day (74% reduction)
+ANNUAL_SAVINGS: 1241 kg CO2/year
+COST: $25,000-$40,000 initial (varies by model)
+COST_CATEGORY: high
 DIFFICULTY: Hard
-DESCRIPTION: Electric vehicles produce significantly lower emissions, especially when charged with renewable energy. Consider the total lifecycle emissions and charging infrastructure availability.
+TIMEFRAME: Long-term (3-6 months)
+PREREQUISITES: Home charging station, access to electricity grid
+CO_BENEFITS: Lower fuel costs ($1,500/year savings), reduced maintenance, quieter ride, instant torque
+IMPLEMENTATION: Research models, test drive, secure financing, install home charger, apply for government incentives
+SOURCE: EPA 2024, IEA Global EV Outlook 2024
+CONFIDENCE: High
+REGION: Global (varies by electricity mix)
+DESCRIPTION: Electric vehicles produce significantly lower emissions, especially when charged with renewable energy. US grid average: 230g CO2/kWh. With 100% renewable charging, emissions drop to 0.2 kg CO2/day. Consider total lifecycle emissions and local charging infrastructure availability.
 
 TIP: Use public transportation instead of driving
 CATEGORY: Transport
-EMISSION_REDUCTION: 3.4 kg CO2/day (74% reduction for 20km daily)
+CURRENT_ACTIVITY: Driving petrol car 20km
+CURRENT_EMISSION: 4.6 kg CO2/day
+ALTERNATIVE_EMISSION: 1.2 kg CO2/day (bus)
+EMISSION_REDUCTION: 3.4 kg CO2/day (74% reduction)
+ANNUAL_SAVINGS: 1241 kg CO2/year
+COST: $50-$150/month transit pass
+COST_CATEGORY: low
 DIFFICULTY: Easy
-DESCRIPTION: Taking the bus or train dramatically reduces your carbon footprint. Public transport is 3-4 times more efficient than driving alone.
+TIMEFRAME: Immediate (1 week)
+PREREQUISITES: Available routes, schedule flexibility
+CO_BENEFITS: Cost savings ($300-500/month vs car), productive commute time, less stress, no parking hassles
+IMPLEMENTATION: Check route schedules, buy monthly pass, plan journey times, download transit apps
+SOURCE: EPA 2024, APTA Public Transportation Fact Book
+CONFIDENCE: High
+REGION: Urban areas
+DESCRIPTION: Taking the bus or train dramatically reduces your carbon footprint. Public transport is 3-4 times more efficient than driving alone. Metro/subway is even better at 0.6 kg CO2/day. Best for urban areas with established transit networks.
 
 TIP: Carpool with colleagues or neighbors
 CATEGORY: Transport
-EMISSION_REDUCTION: 3.1 kg CO2/day (67% reduction for 20km daily)
+CURRENT_ACTIVITY: Driving petrol car 20km
+CURRENT_EMISSION: 4.6 kg CO2/day
+ALTERNATIVE_EMISSION: 1.5 kg CO2/day (3 people)
+EMISSION_REDUCTION: 3.1 kg CO2/day (67% reduction)
+ANNUAL_SAVINGS: 1131 kg CO2/year
+COST: Minimal (share gas costs)
+COST_CATEGORY: low
 DIFFICULTY: Easy
-DESCRIPTION: Sharing rides splits emissions among passengers. Carpooling with just one other person cuts your transport emissions in half.
+TIMEFRAME: Short-term (2 weeks)
+PREREQUISITES: Coordinated schedules, nearby colleagues/neighbors
+CO_BENEFITS: Cost sharing ($100-200/month savings), social interaction, HOV lane access
+IMPLEMENTATION: Ask colleagues, create schedule, rotate drivers, agree on cost sharing
+SOURCE: EPA 2024
+CONFIDENCE: High
+REGION: Global
+DESCRIPTION: Sharing rides splits emissions among passengers. Carpooling with just one other person cuts your transport emissions in half. With 3 people, reduce by 67%. Works best with regular commute partners with similar schedules.
 
 TIP: Cycle for short distances under 5km
 CATEGORY: Transport
-EMISSION_REDUCTION: 4.6 kg CO2/day (100% reduction)
+CURRENT_ACTIVITY: Driving petrol car 5km
+CURRENT_EMISSION: 1.15 kg CO2/trip
+ALTERNATIVE_EMISSION: 0.0 kg CO2/trip
+EMISSION_REDUCTION: 1.15 kg CO2/trip (100% reduction)
+ANNUAL_SAVINGS: 420 kg CO2/year (daily trips)
+COST: $300-$1,500 (bike purchase), minimal maintenance
+COST_CATEGORY: low
 DIFFICULTY: Medium
-DESCRIPTION: Cycling produces zero emissions and improves health. Ideal for urban commutes and short trips.
+TIMEFRAME: Short-term (1-2 weeks)
+PREREQUISITES: Bike lanes/safe routes, bike storage, weather considerations
+CO_BENEFITS: Improved fitness, zero fuel cost, no parking fees, mental health benefits
+IMPLEMENTATION: Buy or rent bike, map safe routes, get helmet and lights, start with short trips
+SOURCE: EPA 2024, European Cyclists' Federation
+CONFIDENCE: High
+REGION: Global (urban/suburban)
+DESCRIPTION: Cycling produces zero emissions and improves health. Ideal for urban commutes and short trips under 5km. E-bikes available for longer distances or hills (0.1 kg CO2/20km). Weather and infrastructure are key factors.
 
 TIP: Work from home when possible
 CATEGORY: Transport
+CURRENT_ACTIVITY: Driving petrol car 20km (commute)
+CURRENT_EMISSION: 4.6 kg CO2/day
+ALTERNATIVE_EMISSION: 0.0 kg CO2/day
 EMISSION_REDUCTION: 4.6 kg CO2/day (100% reduction on remote days)
+ANNUAL_SAVINGS: 1679 kg CO2/year (3 days/week)
+COST: No cost (savings on fuel and parking)
+COST_CATEGORY: low
 DIFFICULTY: Easy
-DESCRIPTION: Remote work eliminates commute emissions entirely. Even 2-3 days per week makes a significant impact.
+TIMEFRAME: Immediate (if employer allows)
+PREREQUISITES: Job compatibility, employer approval, home workspace
+CO_BENEFITS: Time savings (2+ hours/day), work-life balance, fuel savings ($200+/month)
+IMPLEMENTATION: Discuss with employer, set up home office, establish routine, maintain productivity
+SOURCE: EPA 2024, Global Workplace Analytics
+CONFIDENCE: High
+REGION: Global
+DESCRIPTION: Remote work eliminates commute emissions entirely. Even 2-3 days per week makes a significant impact. Save time and money while reducing emissions. Best for knowledge workers with compatible roles.
 
 TIP: Combine errands into single trips
 CATEGORY: Transport
+CURRENT_ACTIVITY: Multiple short driving trips
+CURRENT_EMISSION: 4.6 kg CO2/day
+ALTERNATIVE_EMISSION: 3.1 kg CO2/day
 EMISSION_REDUCTION: 1.5 kg CO2/day (30% reduction)
+ANNUAL_SAVINGS: 548 kg CO2/year
+COST: No cost
+COST_CATEGORY: low
 DIFFICULTY: Easy
-DESCRIPTION: Trip chaining reduces total distance driven and cold starts, which are less efficient.
+TIMEFRAME: Immediate
+PREREQUISITES: Trip planning
+CO_BENEFITS: Time savings, reduced wear on vehicle, fuel savings
+IMPLEMENTATION: Plan weekly errands, create efficient routes, batch similar tasks
+SOURCE: EPA 2024
+CONFIDENCE: Medium
+REGION: Global
+DESCRIPTION: Trip chaining reduces total distance driven and cold starts, which are less efficient. Plan your route to minimize backtracking. Cold engines emit 50% more pollutants in first mile.
 
 TIP: Maintain proper tire pressure
 CATEGORY: Transport
+CURRENT_ACTIVITY: Driving with underinflated tires
+CURRENT_EMISSION: 4.6 kg CO2/day
+ALTERNATIVE_EMISSION: 4.3 kg CO2/day
 EMISSION_REDUCTION: 0.3 kg CO2/day (7% reduction)
+ANNUAL_SAVINGS: 110 kg CO2/year
+COST: No cost (DIY) or $5-10 (service station)
+COST_CATEGORY: low
 DIFFICULTY: Easy
-DESCRIPTION: Properly inflated tires improve fuel efficiency by 3-5%. Check monthly for optimal performance.
+TIMEFRAME: Immediate
+PREREQUISITES: Tire pressure gauge, air pump access
+CO_BENEFITS: Better fuel economy (3-5%), extended tire life, improved safety
+IMPLEMENTATION: Check pressure monthly, inflate to recommended PSI (door jamb sticker), check before long trips
+SOURCE: EPA 2024, US Department of Energy
+CONFIDENCE: High
+REGION: Global
+DESCRIPTION: Properly inflated tires improve fuel efficiency by 3-5%. Check monthly for optimal performance. Underinflated tires increase rolling resistance and fuel consumption. Simple maintenance with big impact.
 
 TIP: Avoid air travel when alternatives exist
 CATEGORY: Transport
-EMISSION_REDUCTION: 2.5 kg CO2/day per 100km avoided
+CURRENT_ACTIVITY: Domestic flight 500km
+CURRENT_EMISSION: 125 kg CO2 (per round trip)
+ALTERNATIVE_EMISSION: 8 kg CO2 (train)
+EMISSION_REDUCTION: 117 kg CO2 per trip (94% reduction)
+ANNUAL_SAVINGS: Variable (depends on frequency)
+COST: Often similar or cheaper by train
+COST_CATEGORY: medium
 DIFFICULTY: Medium
-DESCRIPTION: Flying is the most carbon-intensive transport mode. Choose trains or buses for distances under 500km.
+TIMEFRAME: Short-term (requires planning)
+PREREQUISITES: Train/bus infrastructure, flexible schedule
+CO_BENEFITS: See scenery, work/relax during travel, city center to city center, no airport hassles
+IMPLEMENTATION: Compare train/bus options, book advance tickets, consider overnight trains
+SOURCE: EPA 2024, ICCT Aviation Emissions
+CONFIDENCE: High
+REGION: Europe, Asia (high-speed rail), limited in US
+DESCRIPTION: Flying is the most carbon-intensive transport mode. Choose trains or buses for distances under 500km. High-speed rail emits 90% less CO2 than flying. For longer distances, consider video conferencing.
 
 === HOUSEHOLD TIPS ===
 

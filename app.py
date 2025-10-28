@@ -13,6 +13,7 @@ from components.agent import CO2ReductionAgent
 from components.llm_client import LLMClient
 from components.vector_store import VectorStore
 from components.reference_data import ReferenceDataManager
+from components.feedback_collector import FeedbackCollector
 from models.data_models import AgentResponse, DatasetAnalysis
 
 
@@ -372,6 +373,100 @@ def render_query_results(response: AgentResponse):
             st.bar_chart(chart_df.set_index("Option"))
     else:
         st.warning("No specific recommendations available for this query.")
+    
+    # Add feedback section
+    render_feedback_interface(response)
+
+
+def render_feedback_interface(response: AgentResponse):
+    """
+    Render user feedback collection interface.
+    
+    Args:
+        response: AgentResponse to collect feedback on
+    """
+    st.markdown("---")
+    st.markdown("### 💭 Was this helpful?")
+    st.markdown("Your feedback helps us improve recommendations.")
+    
+    col1, col2, col3, col4 = st.columns([1, 1, 1, 2])
+    
+    with col1:
+        if st.button("👍 Helpful", key="helpful_btn"):
+            collector = FeedbackCollector()
+            collector.save_feedback(
+                query=st.session_state.get('last_query', ''),
+                response=response.summary,
+                is_helpful=True,
+                rating=5
+            )
+            st.success("Thanks for your feedback!")
+    
+    with col2:
+        if st.button("👎 Not Helpful", key="not_helpful_btn"):
+            st.session_state['show_feedback_form'] = True
+    
+    with col3:
+        if st.button("⚠️ Inaccurate", key="inaccurate_btn"):
+            st.session_state['show_inaccuracy_form'] = True
+    
+    # Show detailed feedback form if requested
+    if st.session_state.get('show_feedback_form', False):
+        with st.form("feedback_form"):
+            st.markdown("**What could be improved?**")
+            feedback_text = st.text_area(
+                "Your feedback (optional)",
+                placeholder="Tell us what was missing or could be better..."
+            )
+            rating = st.slider("Rate this recommendation", 1, 5, 3)
+            
+            col_submit, col_cancel = st.columns(2)
+            with col_submit:
+                if st.form_submit_button("Submit Feedback"):
+                    collector = FeedbackCollector()
+                    collector.save_feedback(
+                        query=st.session_state.get('last_query', ''),
+                        response=response.summary,
+                        is_helpful=False,
+                        rating=rating,
+                        feedback_text=feedback_text
+                    )
+                    st.success("Thank you for your detailed feedback!")
+                    st.session_state['show_feedback_form'] = False
+                    st.rerun()
+            
+            with col_cancel:
+                if st.form_submit_button("Cancel"):
+                    st.session_state['show_feedback_form'] = False
+                    st.rerun()
+    
+    # Show inaccuracy report form
+    if st.session_state.get('show_inaccuracy_form', False):
+        with st.form("inaccuracy_form"):
+            st.markdown("**Report Inaccuracy**")
+            st.markdown("Please describe what was inaccurate:")
+            issue_description = st.text_area(
+                "Issue description",
+                placeholder="E.g., 'The emission value for electric cars seems too high'"
+            )
+            
+            col_submit, col_cancel = st.columns(2)
+            with col_submit:
+                if st.form_submit_button("Submit Report"):
+                    collector = FeedbackCollector()
+                    collector.log_inaccuracy_report(
+                        query=st.session_state.get('last_query', ''),
+                        response=response.summary,
+                        issue_description=issue_description
+                    )
+                    st.warning("Thank you for reporting. We'll review this recommendation.")
+                    st.session_state['show_inaccuracy_form'] = False
+                    st.rerun()
+            
+            with col_cancel:
+                if st.form_submit_button("Cancel"):
+                    st.session_state['show_inaccuracy_form'] = False
+                    st.rerun()
 
 
 def render_dataset_analysis_results(analysis: DatasetAnalysis):

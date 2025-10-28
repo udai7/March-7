@@ -168,6 +168,87 @@ class VectorStore:
         
         return documents
     
+    def search_with_filters(
+        self,
+        query: str,
+        k: int = 5,
+        category: Optional[str] = None,
+        cost_category: Optional[str] = None,
+        difficulty: Optional[str] = None,
+        timeframe: Optional[str] = None,
+        min_reduction: Optional[float] = None
+    ) -> List[Document]:
+        """
+        Advanced search with multiple filter options.
+        
+        Args:
+            query: Search query text
+            k: Number of top results to return
+            category: Filter by category (Transport, Household, Food, Lifestyle)
+            cost_category: Filter by cost (low, medium, high)
+            difficulty: Filter by difficulty (Easy, Medium, Hard)
+            timeframe: Filter by timeframe (Immediate, Short-term, Long-term)
+            min_reduction: Minimum emission reduction percentage
+            
+        Returns:
+            Filtered and ranked documents
+        """
+        where_clause = {}
+        
+        # Build where clause based on filters
+        if category:
+            where_clause["category"] = category
+        
+        if cost_category:
+            where_clause["cost_category"] = cost_category
+        
+        if difficulty:
+            where_clause["difficulty"] = difficulty
+        
+        if timeframe:
+            where_clause["timeframe"] = timeframe
+        
+        # Perform search with filters
+        documents = self.search(query, k=k*2, filter_metadata=where_clause if where_clause else None)
+        
+        # Post-filter by reduction percentage if specified
+        if min_reduction is not None:
+            documents = [
+                doc for doc in documents
+                if doc.metadata.get('reduction_percentage', 0) >= min_reduction
+            ]
+        
+        return documents[:k]
+    
+    def get_by_category(self, category: str, k: int = 10) -> List[Document]:
+        """
+        Get all documents in a specific category.
+        
+        Args:
+            category: Category name
+            k: Maximum number of results
+            
+        Returns:
+            Documents in the category
+        """
+        results = self.collection.get(
+            where={"category": category},
+            limit=k,
+            include=["documents", "metadatas"]
+        )
+        
+        documents = []
+        if results and results['ids']:
+            for i in range(len(results['ids'])):
+                doc = Document(
+                    content=results['documents'][i],
+                    metadata=results['metadatas'][i] if results['metadatas'] else {},
+                    doc_id=results['ids'][i]
+                )
+                documents.append(doc)
+        
+        return documents
+    
     def update_document(
         self, 
         doc_id: str, 
