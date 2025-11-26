@@ -1117,7 +1117,7 @@ def render_roi_calculator(calculator: FinancialCalculator):
         comparison_data["CO₂ Saved (kg/year)"].append(f"{opt['co2_savings_annual']:,}")
     
     df = pd.DataFrame(comparison_data)
-    st.dataframe(df, use_container_width=True, hide_index=True)
+    st.dataframe(df)
 
 
 def display_roi_results(roi: ROIResult, investment_data: dict):
@@ -1466,6 +1466,66 @@ def render_receipt_scanner():
         render_analysis_history()
 
 
+def analyze_receipt_image_with_llm(image_base64: str) -> Optional[str]:
+    """
+    Analyze a receipt image using LLM vision capabilities.
+    
+    Args:
+        image_base64: Base64 encoded image
+        
+    Returns:
+        Extracted text/products from the receipt or None
+    """
+    import os
+    
+    # Try Groq first (with vision model)
+    groq_api_key = os.getenv("GROQ_API_KEY")
+    
+    if groq_api_key:
+        try:
+            from groq import Groq
+            
+            client = Groq(api_key=groq_api_key)
+            
+            # Use Llama 4 Scout vision model for image analysis
+            response = client.chat.completions.create(
+                model="meta-llama/llama-4-scout-17b-16e-instruct",
+                messages=[
+                    {
+                        "role": "user",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": """Analyze this receipt image and extract all purchased items.
+For each item, list it in this format (one per line):
+PRODUCT_NAME    $PRICE
+
+Only include actual products, not totals, taxes, subtotals, or store information.
+If you can see quantities, include them like: 2x PRODUCT_NAME    $PRICE
+Be precise with the product names and prices you can read."""
+                            },
+                            {
+                                "type": "image_url",
+                                "image_url": {
+                                    "url": f"data:image/jpeg;base64,{image_base64}"
+                                }
+                            }
+                        ]
+                    }
+                ],
+                max_tokens=1000
+            )
+            
+            return response.choices[0].message.content
+            
+        except Exception as e:
+            st.warning(f"Groq vision analysis failed: {str(e)}")
+            return None
+    else:
+        st.warning("⚠️ GROQ_API_KEY not set. Please set it in your .env file to enable image analysis.")
+        return None
+
+
 def render_receipt_upload(scanner: ReceiptScanner):
     """Render receipt image upload interface."""
     st.markdown("### 📷 Upload Receipt Image")
@@ -1483,7 +1543,7 @@ def render_receipt_upload(scanner: ReceiptScanner):
         col1, col2 = st.columns([1, 1])
         
         with col1:
-            st.image(uploaded_file, caption="Uploaded Receipt", use_container_width=True)
+            st.image(uploaded_file, caption="Uploaded Receipt", use_column_width=True)
         
         with col2:
             st.markdown("**Receipt Details:**")
@@ -1495,14 +1555,50 @@ def render_receipt_upload(scanner: ReceiptScanner):
             )
             
             st.info("""
-            📝 **Note:** For best results with image analysis:
+            📝 **Tips for best results:**
             - Ensure the receipt is well-lit
             - Text should be readable
             - Avoid creases or folds
-            
-            Since LLM vision is not configured, please use 
-            **Manual Entry** tab to input products.
             """)
+            
+            # Analyze image button
+            if st.button("🔍 Analyze Receipt Image", key="analyze_image"):
+                st.session_state.analyze_receipt_image = True
+                st.session_state.image_base64 = None
+                try:
+                    import base64
+                    uploaded_file.seek(0)
+                    image_bytes = uploaded_file.read()
+                    st.session_state.image_base64 = base64.b64encode(image_bytes).decode('utf-8')
+                    st.session_state.receipt_store_name = store_name or "Unknown Store"
+                except Exception as e:
+                    st.error(f"Error reading image: {str(e)}")
+    
+    # Process image analysis outside of columns to avoid nesting issues
+    if st.session_state.get('analyze_receipt_image') and st.session_state.get('image_base64'):
+        st.session_state.analyze_receipt_image = False
+        
+        with st.spinner("🤖 Analyzing receipt with AI..."):
+            try:
+                extracted_text = analyze_receipt_image_with_llm(st.session_state.image_base64)
+                
+                if extracted_text:
+                    st.success("✅ Receipt analyzed successfully!")
+                    st.markdown("**Detected Items:**")
+                    st.text(extracted_text)
+                    
+                    # Parse and analyze
+                    analysis = scanner.analyze_receipt(
+                        text=extracted_text,
+                        store_name=st.session_state.get('receipt_store_name', "Unknown Store")
+                    )
+                    st.session_state.receipt_analysis = analysis
+                    display_receipt_analysis(analysis, scanner)
+                else:
+                    st.warning("Could not extract text from image. Please use the text input below or Manual Entry tab.")
+            except Exception as e:
+                st.error(f"Error analyzing image: {str(e)}")
+                st.info("💡 Try pasting the receipt text below instead.")
     
     # Alternative: Paste text from receipt
     st.markdown("---")
@@ -1603,18 +1699,23 @@ def render_manual_product_entry(scanner: ReceiptScanner):
         
         with col1:
             if st.button("🔍 Analyze Products", key="analyze_products"):
-                with st.spinner("Analyzing products..."):
-                    analysis = scanner.analyze_receipt(
-                        products=st.session_state.manual_products,
-                        store_name="Manual Entry"
-                    )
-                    st.session_state.receipt_analysis = analysis
-                    display_receipt_analysis(analysis, scanner)
+                st.session_state.trigger_manual_analysis = True
         
         with col2:
             if st.button("🗑️ Clear All", key="clear_products"):
                 st.session_state.manual_products = []
                 st.rerun()
+        
+        # Process analysis outside of columns
+        if st.session_state.get('trigger_manual_analysis'):
+            st.session_state.trigger_manual_analysis = False
+            with st.spinner("Analyzing products..."):
+                analysis = scanner.analyze_receipt(
+                    products=st.session_state.manual_products,
+                    store_name="Manual Entry"
+                )
+                st.session_state.receipt_analysis = analysis
+                display_receipt_analysis(analysis, scanner)
     else:
         st.info("Add products using the form above.")
 
@@ -1713,7 +1814,7 @@ def display_receipt_analysis(analysis: ReceiptAnalysis, scanner: ReceiptScanner)
             cat_data["Items"].append(data["count"])
         
         df = pd.DataFrame(cat_data)
-        st.dataframe(df, use_container_width=True, hide_index=True)
+        st.dataframe(df)
         
         st.bar_chart(df.set_index("Category")["CO₂ (kg)"])
     

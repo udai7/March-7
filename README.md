@@ -27,6 +27,27 @@ Ask questions like _"I drive 20km daily, how can I reduce my environmental impac
 | 📈 **Impact Quantification**    | See precise reductions across all environmental metrics                       |
 | 🏆 **Sustainability Grading**   | Get an overall grade (A+ to F) based on your environmental performance        |
 | 🎨 **Interactive Dashboard**    | Clean Streamlit interface with multi-metric charts and visualizations         |
+| 💰 **Financial Calculator**     | Calculate cost savings, ROI on green investments, and carbon credits          |
+| 🧾 **Receipt Scanner**          | Analyze purchase receipts for environmental impact of products                |
+
+### 💰 Financial Impact Calculator (NEW!)
+
+Calculate the financial benefits of your eco-friendly choices:
+
+- **Cost Savings Calculator**: Calculate savings from switching transport modes, reducing energy/water usage
+- **Green Investment ROI**: Analyze payback periods and returns for solar panels, EVs, heat pumps, and more
+- **Utility Cost Comparison**: Compare current vs. optimized utility costs with detailed breakdowns
+- **Carbon Credit Calculator**: Estimate your carbon credit earnings or tax liability
+
+### 🧾 Receipt & Product Scanner (NEW!)
+
+Analyze your shopping to understand environmental impact:
+
+- **Receipt Text Analysis**: Paste receipt text to auto-detect products and calculate impact
+- **Manual Product Entry**: Add products individually for detailed environmental analysis
+- **Category-Based Impact**: See CO₂, water, and waste footprint by product category
+- **Eco Recommendations**: Get personalized suggestions for greener alternatives
+- **Sustainability Scoring**: Each product gets a 0-100 sustainability score
 
 ## 📊 Environmental Metrics Tracked
 
@@ -192,7 +213,10 @@ co2-reduction-ai-agent/
 │   ├── reference_data.py
 │   ├── knowledge_loader.py
 │   ├── prompt_templates.py
-│   └── response_parser.py
+│   ├── response_parser.py
+│   ├── environmental_scorer.py  # Sustainability scoring
+│   ├── financial_calculator.py  # ROI & cost savings
+│   └── receipt_scanner.py       # Receipt/product analysis
 ├── models/                     # Data models
 │   └── data_models.py         # Pydantic models
 ├── data/                       # Data files
