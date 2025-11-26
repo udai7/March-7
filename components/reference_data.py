@@ -1,19 +1,19 @@
 """
-Reference data manager for CO2 emission activities.
+Reference data manager for comprehensive environmental impact activities.
 
 This module provides functionality to load and query the reference dataset
-of activities and their associated CO2 emissions.
+of activities and their associated environmental metrics (CO2, water, energy, waste, etc.).
 """
 
 import pandas as pd
-from typing import Optional, List
+from typing import Optional, List, Dict
 from pathlib import Path
 from difflib import get_close_matches
-from models.data_models import Activity, Category
+from models.data_models import Activity, Category, EnvironmentalMetrics
 
 
 class ReferenceDataManager:
-    """Manages the reference dataset of activities and their CO2 emissions."""
+    """Manages the reference dataset of activities and their environmental impacts."""
 
     def __init__(self, filepath: str = "data/reference_activities.csv"):
         """
@@ -51,14 +51,19 @@ class ReferenceDataManager:
         if missing_columns:
             raise ValueError(f"Missing required columns: {missing_columns}")
 
-        # Create lookup dictionary for faster access
-        self._activity_lookup = {
-            row["Activity"].lower(): {
+        # Create lookup dictionary for faster access with all environmental metrics
+        self._activity_lookup = {}
+        for _, row in self.data.iterrows():
+            activity_key = row["Activity"].lower()
+            self._activity_lookup[activity_key] = {
                 "emission": row["Avg_CO2_Emission(kg/day)"],
-                "category": row["Category"]
+                "category": row["Category"],
+                "water": row.get("Water_Usage(L/day)", 0.0),
+                "energy": row.get("Energy_Usage(kWh/day)", 0.0),
+                "waste": row.get("Waste_Generation(kg/day)", 0.0),
+                "land_use": row.get("Land_Use(m2)", 0.0),
+                "pollution_index": row.get("Pollution_Index", 0)
             }
-            for _, row in self.data.iterrows()
-        }
 
         return self.data
 
@@ -88,6 +93,45 @@ class ReferenceDataManager:
             matches = get_close_matches(activity_lower, activity_names, n=1, cutoff=0.6)
             if matches:
                 return self._activity_lookup[matches[0]]["emission"]
+
+        return None
+    
+    def get_activity_environmental_metrics(self, activity: str, fuzzy_match: bool = True) -> Optional[EnvironmentalMetrics]:
+        """
+        Get comprehensive environmental metrics for a specific activity.
+
+        Args:
+            activity: Name of the activity to look up
+            fuzzy_match: If True, use fuzzy matching to find similar activities
+
+        Returns:
+            EnvironmentalMetrics object with all metrics, or None if not found
+        """
+        if self.data is None:
+            self.load_reference_data()
+
+        activity_lower = activity.lower()
+        activity_data = None
+
+        # Try exact match first
+        if activity_lower in self._activity_lookup:
+            activity_data = self._activity_lookup[activity_lower]
+        # Try fuzzy matching if enabled
+        elif fuzzy_match:
+            activity_names = list(self._activity_lookup.keys())
+            matches = get_close_matches(activity_lower, activity_names, n=1, cutoff=0.6)
+            if matches:
+                activity_data = self._activity_lookup[matches[0]]
+
+        if activity_data:
+            return EnvironmentalMetrics(
+                co2_kg_per_day=activity_data["emission"],
+                water_liters_per_day=activity_data["water"],
+                energy_kwh_per_day=activity_data["energy"],
+                waste_kg_per_day=activity_data["waste"],
+                land_use_m2=activity_data["land_use"],
+                pollution_index=activity_data["pollution_index"]
+            )
 
         return None
 

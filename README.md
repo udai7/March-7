@@ -1,26 +1,43 @@
-# CO₂ Reduction AI Agent 🌱
+# Environmental Impact AI Agent 🌍
 
-An intelligent AI system that helps you understand and reduce your carbon footprint through personalized, data-driven recommendations.
+An intelligent AI system that helps you understand and reduce your **complete environmental footprint** through personalized, data-driven recommendations covering CO₂ emissions, water usage, energy consumption, and waste generation.
 
 ## ✨ What It Does
 
-Ask questions like _"I drive 20km daily, how can I reduce emissions?"_ or upload your activity data, and get:
+Ask questions like _"I drive 20km daily, how can I reduce my environmental impact?"_ or upload your activity data, and get:
 
-- **Personalized recommendations** ranked by impact
-- **Quantified savings** in kg CO₂/day and annual projections
-- **Actionable steps** with difficulty and timeframe estimates
+- **Comprehensive environmental analysis** across CO₂, water, energy, and waste metrics
+- **Personalized recommendations** ranked by overall environmental impact
+- **Quantified savings** in kg CO₂/day, liters water, kWh energy, and waste reduction
+- **Sustainability grades** (A+ to F) based on your environmental footprint
+- **Health & cost benefits** alongside environmental improvements
 - **Source-backed advice** from a curated sustainability knowledge base
 
 ## 🎯 Key Features
 
 | Feature                         | Description                                                                   |
-| ------------------------------- | -----------------------------------------------------------------------------  |
+| ------------------------------- | ----------------------------------------------------------------------------- |
+| 🌡️ **CO₂ Tracking**             | Measure and reduce carbon emissions from all your activities                  |
+| 💧 **Water Footprint**          | Track water consumption and get water-saving recommendations                  |
+| ⚡ **Energy Analysis**          | Monitor energy usage and optimize for efficiency                              |
+| ♻️ **Waste Management**         | Reduce waste generation with practical alternatives                           |
 | 💬 **Natural Language Queries** | Ask questions in plain English, get instant AI-powered answers                |
-| 📊 **Dataset Analysis**         | Upload CSV/Excel files for comprehensive carbon footprint analysis            |
+| 📊 **Dataset Analysis**         | Upload CSV/Excel files for comprehensive multi-metric analysis                |
 | 🤖 **RAG-Powered Intelligence** | Combines vector search + LLM reasoning for accurate, grounded recommendations |
-| 📈 **Impact Quantification**    | See precise emission reductions (kg CO₂/day) and annual savings               |
-| ⚡ **Fast Responses**           | Sub-2-second answers using optimized retrieval and inference                  |
-| 🎨 **Interactive UI**           | Clean Streamlit interface with charts and visualizations                      |
+| 📈 **Impact Quantification**    | See precise reductions across all environmental metrics                       |
+| 🏆 **Sustainability Grading**   | Get an overall grade (A+ to F) based on your environmental performance        |
+| 🎨 **Interactive Dashboard**    | Clean Streamlit interface with multi-metric charts and visualizations         |
+
+## 📊 Environmental Metrics Tracked
+
+| Metric             | Unit       | Description                                     |
+| ------------------ | ---------- | ----------------------------------------------- |
+| 🌡️ CO₂ Emissions   | kg/day     | Carbon dioxide equivalent emissions             |
+| 💧 Water Usage     | liters/day | Total water consumption including virtual water |
+| ⚡ Energy          | kWh/day    | Electricity and fuel energy consumption         |
+| 🗑️ Waste           | kg/day     | Solid waste generation                          |
+| 🏭 Pollution Index | 0-100      | Combined air/water pollution score              |
+| 🌲 Land Use        | m²         | Land area required for activities               |
 
 ## 🚀 Quick Start (3 Steps)
 

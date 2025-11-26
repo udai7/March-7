@@ -1,5 +1,6 @@
 """
 Prompt templates for LLM interactions with enhanced accuracy constraints
+for comprehensive environmental impact analysis (CO2, water, energy, waste).
 """
 from typing import List, Dict, Any, Optional
 from models.data_models import Activity
@@ -14,7 +15,10 @@ class PromptTemplates:
         emission: float,
         category: str,
         alternatives: List[str],
-        user_context: Optional[Dict[str, Any]] = None
+        user_context: Optional[Dict[str, Any]] = None,
+        water_usage: float = 0.0,
+        energy_usage: float = 0.0,
+        waste_generation: float = 0.0
     ) -> str:
         """
         Generate enhanced prompt with accuracy constraints and user context.
@@ -25,6 +29,9 @@ class PromptTemplates:
             category: Activity category
             alternatives: List of alternative activities from knowledge base
             user_context: Optional user context (budget, location, etc.)
+            water_usage: Water consumption in liters/day
+            energy_usage: Energy consumption in kWh/day
+            waste_generation: Waste generation in kg/day
             
         Returns:
             Formatted prompt string with strict accuracy requirements
@@ -41,14 +48,16 @@ USER CONTEXT:
 - Lifestyle: {user_context.get('lifestyle', 'Not specified')}
 """
         
-        prompt = f"""You are an expert CO₂ reduction advisor. Provide accurate, data-driven recommendations based ONLY on the verified information below.
+        prompt = f"""You are an expert environmental sustainability advisor. Provide accurate, data-driven recommendations based ONLY on the verified information below. Consider ALL environmental impacts: CO₂ emissions, water usage, energy consumption, and waste generation.
 
 {context_str}
 CURRENT ACTIVITY:
 Activity: {activity}
 Category: {category}
-Current CO₂ Emission: {emission} kg/day
-Annual Emission: {emission * 365:.1f} kg/year
+Current CO₂ Emission: {emission} kg/day ({emission * 365:.1f} kg/year)
+Water Usage: {water_usage} liters/day
+Energy Consumption: {energy_usage} kWh/day
+Waste Generation: {waste_generation} kg/day
 
 VERIFIED SUSTAINABILITY ALTERNATIVES:
 {alternatives_text}
@@ -59,31 +68,38 @@ CRITICAL INSTRUCTIONS - ACCURACY REQUIREMENTS:
    - Reduction (kg/day) = Current - Alternative
    - Reduction % = ((Current - Alternative) / Current) × 100
    - Annual Savings = Daily Reduction × 365
-3. Provide 3-5 alternatives ranked by CO₂ reduction impact
-4. Include specific numbers with units (kg CO₂/day, % reduction, kg/year)
+3. Provide 3-5 alternatives ranked by OVERALL environmental impact
+4. Include specific numbers with units (kg CO₂/day, liters water, kWh, % reduction, kg/year)
 5. Consider user context when applicable
 6. Mark difficulty: Easy/Medium/Hard based on implementation complexity
 7. Specify timeframe: Immediate (<1 week)/Short-term (1-3 months)/Long-term (>3 months)
 8. Add realistic cost estimates or note "Minimal cost" / "Cost savings"
-9. List 2-4 co-benefits (health, financial savings, time, comfort, etc.)
+9. List 2-4 co-benefits (health, financial savings, time, comfort, water savings, etc.)
 10. If data is insufficient, state "Limited data available" instead of guessing
 11. NEVER make up emission values - use only the provided alternatives
 
 RESPONSE FORMAT (strictly follow):
 
 **Current Activity:** {activity}
-**Current Emission:** {emission} kg CO₂/day ({emission * 365:.0f} kg/year)
+**Current Environmental Impact:**
+- CO₂: {emission} kg/day ({emission * 365:.0f} kg/year)
+- Water: {water_usage} L/day
+- Energy: {energy_usage} kWh/day
+- Waste: {waste_generation} kg/day
 
-**Recommendations (ranked by impact):**
+**Recommendations (ranked by overall impact):**
 
 1. **[Alternative Name]**
-   - Emission: [X.X] kg CO₂/day
-   - Reduction: [Y.Y] kg CO₂/day ([Z]% reduction)
-   - Annual Savings: [A] kg CO₂/year
+   - CO₂ Emission: [X.X] kg/day (Saves [Y.Y] kg/day, [Z]% reduction)
+   - Water Savings: [L/day]
+   - Energy Savings: [kWh/day]
+   - Waste Reduction: [kg/day]
+   - Annual CO₂ Savings: [A] kg/year
    - Cost: [Estimate or "Minimal" or "Cost savings: $X/month"]
    - Difficulty: [Easy/Medium/Hard]
    - Timeframe: [Immediate/Short-term/Long-term]
    - Co-benefits: [Benefit 1], [Benefit 2], [Benefit 3]
+   - Health Benefits: [Any health-related benefits]
    - Implementation: [2-3 sentence practical steps]
 
 2. **[Alternative Name]**
@@ -91,13 +107,14 @@ RESPONSE FORMAT (strictly follow):
 
 [Continue for remaining recommendations]
 
-**Key Insight:** [1-2 sentence summary of the most impactful action]
+**Key Insight:** [1-2 sentence summary of the most impactful action considering all metrics]
 
 VERIFICATION CHECKLIST (complete before responding):
 ☐ All emission values from verified alternatives
 ☐ Reduction percentages calculated correctly
 ☐ Annual savings = daily reduction × 365
-☐ Recommendations ranked by CO₂ impact
+☐ Recommendations ranked by overall environmental impact
+☐ Water, energy, and waste impacts considered
 ☐ Cost estimates realistic and helpful
 ☐ Implementation steps are specific and actionable"""
         

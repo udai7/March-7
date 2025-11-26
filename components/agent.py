@@ -1,14 +1,16 @@
 """
-Main CO2 Reduction Agent orchestrating the RAG workflow.
+Main Environmental Impact Agent orchestrating the RAG workflow.
 
 This module implements the core agent that processes queries, analyzes datasets,
-and generates recommendations by coordinating all components.
+and generates recommendations by coordinating all components for comprehensive
+environmental impact analysis (CO2, water, energy, waste, and more).
 """
 
 import pandas as pd
 from typing import List, Optional, Dict, Any
+import config
 from models.data_models import (
-    Activity, AgentResponse, DatasetAnalysis, Recommendation, Category
+    Activity, AgentResponse, DatasetAnalysis, Recommendation, Category, EnvironmentalMetrics
 )
 from components.query_processor import QueryProcessor, QueryIntent
 from components.dataset_analyzer import DatasetAnalyzer
@@ -18,14 +20,16 @@ from components.vector_store import VectorStore, Document
 from components.reference_data import ReferenceDataManager
 from components.prompt_templates import PromptTemplates
 from components.response_parser import ResponseParser, parse_llm_response
+from components.environmental_scorer import EnvironmentalScorer
 
 
 class CO2ReductionAgent:
     """
-    Main agent class that orchestrates the CO2 reduction recommendation system.
+    Main agent class that orchestrates the environmental impact recommendation system.
     
     Combines query processing, vector retrieval, LLM generation, and
-    recommendation ranking to provide comprehensive CO2 reduction advice.
+    recommendation ranking to provide comprehensive environmental impact advice
+    covering CO2, water, energy, waste, and pollution metrics.
     """
     
     def __init__(
@@ -35,7 +39,7 @@ class CO2ReductionAgent:
         reference_data_manager: ReferenceDataManager
     ):
         """
-        Initialize the CO2 Reduction Agent.
+        Initialize the Environmental Impact Agent.
         
         Args:
             llm_client: LLM client for text generation
@@ -52,6 +56,7 @@ class CO2ReductionAgent:
         self.recommendation_generator = RecommendationGenerator(reference_data_manager)
         self.prompt_templates = PromptTemplates()
         self.response_parser = ResponseParser()
+        self.environmental_scorer = EnvironmentalScorer()
         
         # Ensure reference data is loaded
         if self.reference_manager.data is None:
@@ -65,7 +70,7 @@ class CO2ReductionAgent:
             query: User's natural language query
             
         Returns:
-            AgentResponse with recommendations and analysis
+            AgentResponse with recommendations and comprehensive environmental analysis
             
         Raises:
             ValueError: If query is empty or invalid
@@ -341,8 +346,56 @@ Based on the following sustainability knowledge, provide 3-5 specific, actionabl
             recommendations=recommendations[:5],
             total_potential_reduction=total_reduction,
             annual_savings_kg=annual_savings,
-            summary=summary
+            summary=summary,
+            # Extended environmental metrics
+            current_water_usage=self._get_activity_water_usage(current_activity),
+            current_energy_usage=self._get_activity_energy_usage(current_activity),
+            current_waste_generation=self._get_activity_waste_generation(current_activity),
+            total_water_savings=self._calculate_water_savings(recommendations[:5]),
+            total_energy_savings=self._calculate_energy_savings(recommendations[:5]),
+            total_waste_reduction=self._calculate_waste_reduction(recommendations[:5]),
+            environmental_score=self._calculate_environmental_score(current_activity)
         )
+    
+    def _get_activity_water_usage(self, activity: Activity) -> float:
+        """Get water usage for an activity from reference data."""
+        metrics = self.reference_manager.get_activity_environmental_metrics(activity.name)
+        return metrics.water_liters_per_day if metrics else 0.0
+    
+    def _get_activity_energy_usage(self, activity: Activity) -> float:
+        """Get energy usage for an activity from reference data."""
+        metrics = self.reference_manager.get_activity_environmental_metrics(activity.name)
+        return metrics.energy_kwh_per_day if metrics else 0.0
+    
+    def _get_activity_waste_generation(self, activity: Activity) -> float:
+        """Get waste generation for an activity from reference data."""
+        metrics = self.reference_manager.get_activity_environmental_metrics(activity.name)
+        return metrics.waste_kg_per_day if metrics else 0.0
+    
+    def _calculate_water_savings(self, recommendations: List[Recommendation]) -> float:
+        """Calculate total water savings from recommendations."""
+        return sum(rec.water_reduction_liters for rec in recommendations)
+    
+    def _calculate_energy_savings(self, recommendations: List[Recommendation]) -> float:
+        """Calculate total energy savings from recommendations."""
+        return sum(rec.energy_reduction_kwh for rec in recommendations)
+    
+    def _calculate_waste_reduction(self, recommendations: List[Recommendation]) -> float:
+        """Calculate total waste reduction from recommendations."""
+        return sum(rec.waste_reduction_kg for rec in recommendations)
+    
+    def _calculate_environmental_score(self, activity: Activity) -> float:
+        """Calculate environmental score for an activity."""
+        metrics = self.reference_manager.get_activity_environmental_metrics(activity.name)
+        if metrics:
+            return self.environmental_scorer.calculate_environmental_score(
+                co2=metrics.co2_kg_per_day,
+                water=metrics.water_liters_per_day,
+                energy=metrics.energy_kwh_per_day,
+                waste=metrics.waste_kg_per_day,
+                pollution_index=metrics.pollution_index
+            )
+        return 0.0
     
     def _handle_comparison_query(
         self,
