@@ -860,7 +860,15 @@ def render_cost_savings_calculator(calculator: FinancialCalculator):
     
     calc_type = st.selectbox(
         "What type of savings would you like to calculate?",
-        ["Transport Savings", "Energy Savings", "Water Savings"],
+        [
+            "Transport Savings", 
+            "Energy Savings", 
+            "Water Savings",
+            "Food & Groceries",
+            "Heating & Cooling",
+            "Appliance Upgrades",
+            "Subscription Services"
+        ],
         key="savings_type"
     )
     
@@ -880,7 +888,7 @@ def render_cost_savings_calculator(calculator: FinancialCalculator):
             
             current_mode = st.selectbox(
                 "Current transport mode",
-                ["petrol_car", "diesel_car", "motorcycle", "public_transit"],
+                ["petrol_car", "diesel_car", "motorcycle", "public_transit", "hybrid_car"],
                 format_func=lambda x: x.replace("_", " ").title(),
                 key="current_transport"
             )
@@ -888,7 +896,7 @@ def render_cost_savings_calculator(calculator: FinancialCalculator):
         with col2:
             alternative_mode = st.selectbox(
                 "Alternative mode",
-                ["electric_car", "hybrid_car", "public_transit", "cycling", "ebike", "carpool"],
+                ["electric_car", "hybrid_car", "public_transit", "cycling", "ebike", "carpool", "walking"],
                 format_func=lambda x: x.replace("_", " ").title(),
                 key="alt_transport"
             )
@@ -985,6 +993,210 @@ def render_cost_savings_calculator(calculator: FinancialCalculator):
                 water_rate=water_rate
             )
             display_cost_savings(savings)
+    
+    elif calc_type == "Food & Groceries":
+        st.markdown("#### 🍽️ Food & Grocery Cost Savings")
+        st.markdown("Calculate savings from changing your meal habits.")
+        
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            meals_per_week = st.number_input(
+                "Meals per week to change",
+                min_value=1,
+                max_value=21,
+                value=7,
+                step=1,
+                key="meals_week"
+            )
+            
+            current_option = st.selectbox(
+                "Current meal source",
+                ["restaurant", "fast_food", "takeout", "meal_kit", "cafeteria"],
+                format_func=lambda x: x.replace("_", " ").title(),
+                key="current_meal"
+            )
+        
+        with col2:
+            alternative_option = st.selectbox(
+                "Alternative meal source",
+                ["home_cooked", "meal_prep", "plant_based_home", "meal_kit", "cafeteria"],
+                format_func=lambda x: x.replace("_", " ").title(),
+                key="alt_meal"
+            )
+            
+            meal_costs_display = {
+                "restaurant": "$18/meal",
+                "fast_food": "$10/meal", 
+                "takeout": "$15/meal",
+                "meal_kit": "$12/meal",
+                "home_cooked": "$5/meal",
+                "meal_prep": "$4/meal",
+                "plant_based_home": "$3.50/meal",
+                "cafeteria": "$8/meal"
+            }
+            st.info(f"💡 {current_option.replace('_', ' ').title()}: {meal_costs_display.get(current_option, 'N/A')}")
+        
+        if st.button("Calculate Food Savings", key="calc_food"):
+            savings = calculator.calculate_food_cost_savings(
+                meals_per_week=meals_per_week,
+                current_option=current_option,
+                alternative_option=alternative_option
+            )
+            display_cost_savings(savings)
+    
+    elif calc_type == "Appliance Upgrades":
+        st.markdown("#### 🔌 Appliance Upgrade Savings")
+        st.markdown("Calculate savings from upgrading to energy-efficient appliances.")
+        
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            appliance_type = st.selectbox(
+                "Appliance type",
+                ["refrigerator", "washing_machine", "dryer", "dishwasher", 
+                 "air_conditioner", "water_heater", "television", "computer"],
+                format_func=lambda x: x.replace("_", " ").title(),
+                key="appliance_type"
+            )
+            
+            current_age = st.number_input(
+                "Current appliance age (years)",
+                min_value=1,
+                max_value=30,
+                value=15,
+                step=1,
+                key="appliance_age"
+            )
+        
+        with col2:
+            usage_hours = st.number_input(
+                "Daily usage (hours)",
+                min_value=0.5,
+                max_value=24.0,
+                value=8.0,
+                step=0.5,
+                key="usage_hours"
+            )
+            
+            # Show estimated energy use
+            energy_multiplier = 1 + (current_age * 0.02)
+            st.warning(f"⚠️ {current_age}-year-old appliances use ~{int(energy_multiplier*100-100)}% more energy due to wear")
+        
+        if st.button("Calculate Appliance Savings", key="calc_appliance"):
+            savings = calculator.calculate_appliance_savings(
+                appliance_type=appliance_type,
+                current_age_years=current_age,
+                usage_hours_daily=usage_hours
+            )
+            display_cost_savings(savings)
+    
+    elif calc_type == "Heating & Cooling":
+        st.markdown("#### 🌡️ Heating & Cooling Savings")
+        st.markdown("Calculate savings from HVAC system upgrades.")
+        
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            current_system = st.selectbox(
+                "Current system",
+                ["gas_furnace", "oil_furnace", "electric_resistance", 
+                 "window_ac", "central_ac"],
+                format_func=lambda x: x.replace("_", " ").title(),
+                key="current_hvac"
+            )
+            
+            monthly_heating = st.number_input(
+                "Monthly heating cost ($)",
+                min_value=0.0,
+                value=150.0,
+                step=10.0,
+                key="monthly_heat"
+            )
+        
+        with col2:
+            alternative_system = st.selectbox(
+                "New system option",
+                ["heat_pump", "geothermal", "mini_split", "evaporative_cooler"],
+                format_func=lambda x: x.replace("_", " ").title(),
+                key="alt_hvac"
+            )
+            
+            monthly_cooling = st.number_input(
+                "Monthly cooling cost ($)",
+                min_value=0.0,
+                value=100.0,
+                step=10.0,
+                key="monthly_cool"
+            )
+        
+        # Show efficiency comparison
+        efficiency_info = {
+            "gas_furnace": "92-98% efficient",
+            "oil_furnace": "80-90% efficient",
+            "electric_resistance": "100% efficient (but expensive)",
+            "heat_pump": "200-300% efficient (COP 2-3)",
+            "geothermal": "300-500% efficient (COP 3-5)",
+            "mini_split": "200-400% efficient",
+            "evaporative_cooler": "Very efficient in dry climates"
+        }
+        st.info(f"💡 {alternative_system.replace('_', ' ').title()}: {efficiency_info.get(alternative_system, 'N/A')}")
+        
+        if st.button("Calculate HVAC Savings", key="calc_hvac"):
+            savings = calculator.calculate_heating_cooling_savings(
+                current_system=current_system,
+                alternative_system=alternative_system,
+                monthly_heating_cost=monthly_heating,
+                monthly_cooling_cost=monthly_cooling
+            )
+            display_cost_savings(savings)
+    
+    elif calc_type == "Subscription Services":
+        st.markdown("#### 📱 Subscription Service Savings")
+        st.markdown("Calculate savings from reducing digital subscriptions (also saves energy from reduced data usage).")
+        
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            service_type = st.selectbox(
+                "Subscription type",
+                ["streaming", "gaming", "music", "news", "fitness", "cloud_storage", "software", "delivery"],
+                format_func=lambda x: x.replace("_", " ").title(),
+                key="service_type"
+            )
+            
+            current_subs = st.number_input(
+                "Current number of subscriptions",
+                min_value=1,
+                max_value=20,
+                value=5,
+                step=1,
+                key="current_subs"
+            )
+        
+        with col2:
+            reduced_subs = st.number_input(
+                "Subscriptions to keep",
+                min_value=0,
+                max_value=current_subs,
+                value=min(2, current_subs),
+                step=1,
+                key="reduced_subs"
+            )
+            
+            avg_costs = {
+                "streaming": 15, "gaming": 12, "music": 10, "news": 15,
+                "fitness": 30, "cloud_storage": 10, "software": 20, "delivery": 15
+            }
+            st.info(f"💡 Average {service_type} cost: ${avg_costs.get(service_type, 15)}/month each")
+        
+        if st.button("Calculate Subscription Savings", key="calc_subs"):
+            savings = calculator.calculate_subscription_savings(
+                service_type=service_type,
+                current_subscriptions=current_subs,
+                reduced_subscriptions=reduced_subs
+            )
+            display_cost_savings(savings)
 
 
 def display_cost_savings(savings: CostSavings):
@@ -1032,14 +1244,52 @@ def render_roi_calculator(calculator: FinancialCalculator):
     # Get all investment options
     options = calculator.get_all_investment_options()
     
+    # Define investment categories
+    investment_categories = {
+        "⚡ Energy & Power": [
+            InvestmentType.SOLAR_PANELS, InvestmentType.BATTERY_STORAGE, 
+            InvestmentType.SOLAR_WATER_HEATER, InvestmentType.SMART_POWER_STRIPS,
+            InvestmentType.ENERGY_MONITOR
+        ],
+        "🏠 Home Improvement": [
+            InvestmentType.INSULATION, InvestmentType.DOUBLE_GLAZED_WINDOWS,
+            InvestmentType.GREEN_ROOF, InvestmentType.HEAT_PUMP
+        ],
+        "🚗 Transportation": [
+            InvestmentType.ELECTRIC_VEHICLE, InvestmentType.ELECTRIC_BIKE, 
+            InvestmentType.ELECTRIC_SCOOTER, InvestmentType.EV_CHARGER_HOME
+        ],
+        "💡 Efficiency Upgrades": [
+            InvestmentType.LED_LIGHTING, InvestmentType.SMART_THERMOSTAT,
+            InvestmentType.ENERGY_EFFICIENT_APPLIANCES, InvestmentType.EFFICIENT_WATER_HEATER
+        ],
+        "💧 Water Conservation": [
+            InvestmentType.RAINWATER_HARVESTING, InvestmentType.SMART_IRRIGATION
+        ],
+        "♻️ Waste Management": [
+            InvestmentType.COMPOSTING_SYSTEM
+        ]
+    }
+    
+    # Category selection
+    selected_category = st.selectbox(
+        "Select Investment Category",
+        list(investment_categories.keys()),
+        key="investment_category"
+    )
+    
+    # Get investments in selected category
+    category_investments = investment_categories[selected_category]
+    category_options = [opt for opt in options if InvestmentType(opt["type"]) in category_investments]
+    
     # Investment selection
     col1, col2 = st.columns([2, 1])
     
     with col1:
         selected_investment = st.selectbox(
             "Select Investment Type",
-            [opt["type"] for opt in options],
-            format_func=lambda x: next((opt["name"] for opt in options if opt["type"] == x), x),
+            [opt["type"] for opt in category_options],
+            format_func=lambda x: next((opt["name"] for opt in category_options if opt["type"] == x), x),
             key="investment_type"
         )
     
@@ -1050,11 +1300,29 @@ def render_roi_calculator(calculator: FinancialCalculator):
     investment_type = InvestmentType(selected_investment)
     investment_data = calculator.INVESTMENT_DATA[investment_type]
     
+    # Show investment details
+    with st.expander("📋 Investment Details", expanded=True):
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            st.metric("Average Cost", f"${investment_data['avg_cost']:,}")
+            st.metric("Typical Lifetime", f"{investment_data['lifetime_years']} years")
+        with col2:
+            st.metric("Annual Savings", f"${investment_data['avg_annual_savings']:,}/year")
+            co2_savings = investment_data.get('co2_savings_kg_year', 0)
+            st.metric("CO₂ Reduction", f"{co2_savings:,} kg/year")
+        with col3:
+            payback = investment_data['avg_cost'] / investment_data['avg_annual_savings']
+            st.metric("Simple Payback", f"{payback:.1f} years")
+            water_savings = investment_data.get('water_savings_liters_year', 0)
+            if water_savings > 0:
+                st.metric("Water Savings", f"{water_savings:,} L/year")
+    
     # Custom inputs if enabled
     custom_cost = None
     custom_savings = None
     
     if use_custom_values:
+        st.markdown("#### 🔧 Custom Values")
         col1, col2, col3 = st.columns(3)
         
         with col1:
@@ -1096,8 +1364,8 @@ def render_roi_calculator(calculator: FinancialCalculator):
         )
         display_roi_results(roi, investment_data)
     
-    # Show comparison table
-    st.markdown("### 📊 Investment Comparison")
+    # Show comparison table for selected category
+    st.markdown(f"### 📊 {selected_category} Comparison")
     
     comparison_data = {
         "Investment": [],
@@ -1108,8 +1376,8 @@ def render_roi_calculator(calculator: FinancialCalculator):
         "CO₂ Saved (kg/year)": []
     }
     
-    for opt in options:
-        comparison_data["Investment"].append(opt["name"][:30] + "...")
+    for opt in category_options:
+        comparison_data["Investment"].append(opt["name"])
         comparison_data["Initial Cost"].append(f"${opt['avg_cost']:,.0f}")
         comparison_data["Annual Savings"].append(f"${opt['annual_savings']:,.0f}")
         comparison_data["Payback (Years)"].append(f"{opt['payback_years']:.1f}")
@@ -1118,6 +1386,22 @@ def render_roi_calculator(calculator: FinancialCalculator):
     
     df = pd.DataFrame(comparison_data)
     st.dataframe(df)
+    
+    # Quick recommendations
+    st.markdown("### 💡 Quick Recommendations")
+    all_options = sorted(options, key=lambda x: x["payback_years"])
+    
+    col1, col2 = st.columns(2)
+    with col1:
+        st.markdown("**🏆 Fastest Payback:**")
+        for i, opt in enumerate(all_options[:3], 1):
+            st.write(f"{i}. {opt['name']} ({opt['payback_years']:.1f} years)")
+    
+    with col2:
+        highest_roi = sorted(options, key=lambda x: x["roi_percent"], reverse=True)
+        st.markdown("**📈 Highest ROI:**")
+        for i, opt in enumerate(highest_roi[:3], 1):
+            st.write(f"{i}. {opt['name']} ({opt['roi_percent']:.0f}%)")
 
 
 def display_roi_results(roi: ROIResult, investment_data: dict):
@@ -1222,124 +1506,584 @@ def display_roi_results(roi: ROIResult, investment_data: dict):
 def render_utility_comparison(calculator: FinancialCalculator):
     """Render utility cost comparison interface."""
     st.markdown("### 🏠 Utility Cost Comparison")
-    st.markdown("Compare your current utility costs with optimized usage.")
+    st.markdown("Compare your current utility costs with optimized usage or alternative systems.")
     
-    col1, col2 = st.columns(2)
+    # Comparison type selection
+    comparison_type = st.selectbox(
+        "Select Comparison Type",
+        [
+            "📊 General Utility Comparison",
+            "⚡ Electricity Sources",
+            "🔥 Heating Systems",
+            "❄️ Cooling Systems",
+            "💧 Water Systems",
+            "🚗 Transportation Fuel",
+            "🏡 Home Energy Audit"
+        ],
+        key="comparison_type"
+    )
     
-    with col1:
-        st.markdown("**Current Usage (Daily)**")
+    if comparison_type == "📊 General Utility Comparison":
+        st.markdown("#### Compare Current vs Optimized Usage")
         
-        current_elec = st.number_input(
-            "Electricity (kWh/day)",
-            min_value=0.0,
-            value=30.0,
-            step=1.0,
-            key="curr_elec"
-        )
-        
-        current_gas = st.number_input(
-            "Natural Gas (therms/day)",
-            min_value=0.0,
-            value=2.0,
-            step=0.1,
-            key="curr_gas"
-        )
-        
-        current_water = st.number_input(
-            "Water (liters/day)",
-            min_value=0.0,
-            value=300.0,
-            step=10.0,
-            key="curr_water_util"
-        )
-    
-    with col2:
-        st.markdown("**Optimized Usage (Daily)**")
-        
-        opt_elec = st.number_input(
-            "Electricity (kWh/day)",
-            min_value=0.0,
-            value=22.0,
-            step=1.0,
-            key="opt_elec"
-        )
-        
-        opt_gas = st.number_input(
-            "Natural Gas (therms/day)",
-            min_value=0.0,
-            value=1.5,
-            step=0.1,
-            key="opt_gas"
-        )
-        
-        opt_water = st.number_input(
-            "Water (liters/day)",
-            min_value=0.0,
-            value=200.0,
-            step=10.0,
-            key="opt_water_util"
-        )
-    
-    if st.button("Compare Utility Costs", key="compare_utility"):
-        current = {
-            "electricity_kwh": current_elec,
-            "gas_therms": current_gas,
-            "water_liters": current_water
-        }
-        
-        optimized = {
-            "electricity_kwh": opt_elec,
-            "gas_therms": opt_gas,
-            "water_liters": opt_water
-        }
-        
-        comparison = calculator.compare_utility_costs(current, optimized)
-        
-        st.success("📊 Comparison Complete!")
-        
-        col1, col2, col3 = st.columns(3)
+        col1, col2 = st.columns(2)
         
         with col1:
-            st.metric(
-                "Current Monthly Cost",
-                f"${comparison['current_monthly_cost']:.2f}"
+            st.markdown("**Current Usage (Daily)**")
+            
+            current_elec = st.number_input(
+                "Electricity (kWh/day)",
+                min_value=0.0,
+                value=30.0,
+                step=1.0,
+                key="curr_elec"
+            )
+            
+            current_gas = st.number_input(
+                "Natural Gas (therms/day)",
+                min_value=0.0,
+                value=2.0,
+                step=0.1,
+                key="curr_gas"
+            )
+            
+            current_water = st.number_input(
+                "Water (liters/day)",
+                min_value=0.0,
+                value=300.0,
+                step=10.0,
+                key="curr_water_util"
             )
         
         with col2:
-            st.metric(
-                "Optimized Monthly Cost",
-                f"${comparison['optimized_monthly_cost']:.2f}"
+            st.markdown("**Optimized Usage (Daily)**")
+            
+            opt_elec = st.number_input(
+                "Electricity (kWh/day)",
+                min_value=0.0,
+                value=22.0,
+                step=1.0,
+                key="opt_elec"
+            )
+            
+            opt_gas = st.number_input(
+                "Natural Gas (therms/day)",
+                min_value=0.0,
+                value=1.5,
+                step=0.1,
+                key="opt_gas"
+            )
+            
+            opt_water = st.number_input(
+                "Water (liters/day)",
+                min_value=0.0,
+                value=200.0,
+                step=10.0,
+                key="opt_water_util"
             )
         
-        with col3:
-            st.metric(
-                "Monthly Savings",
-                f"${comparison['monthly_savings']:.2f}",
-                delta=f"-{comparison['savings_percentage']:.1f}%",
-                delta_color="inverse"
+        if st.button("Compare Utility Costs", key="compare_utility"):
+            current = {
+                "electricity_kwh": current_elec,
+                "gas_therms": current_gas,
+                "water_liters": current_water
+            }
+            
+            optimized = {
+                "electricity_kwh": opt_elec,
+                "gas_therms": opt_gas,
+                "water_liters": opt_water
+            }
+            
+            comparison = calculator.compare_utility_costs(current, optimized)
+            display_utility_comparison(comparison)
+    
+    elif comparison_type == "⚡ Electricity Sources":
+        st.markdown("#### Compare Electricity Sources")
+        
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            monthly_kwh = st.number_input(
+                "Monthly electricity usage (kWh)",
+                min_value=0.0,
+                value=900.0,
+                step=50.0,
+                key="monthly_kwh"
             )
         
+        with col2:
+            grid_rate = st.number_input(
+                "Current grid rate ($/kWh)",
+                min_value=0.0,
+                value=0.14,
+                step=0.01,
+                format="%.2f",
+                key="grid_rate"
+            )
+        
+        if st.button("Compare Sources", key="compare_elec"):
+            sources = {
+                "Grid Electricity": {"rate": grid_rate, "co2_per_kwh": 0.42},
+                "Solar Panels": {"rate": 0.06, "co2_per_kwh": 0.04},
+                "Wind Power": {"rate": 0.08, "co2_per_kwh": 0.01},
+                "Green Energy Plan": {"rate": grid_rate + 0.02, "co2_per_kwh": 0.05},
+                "Solar + Battery": {"rate": 0.04, "co2_per_kwh": 0.03}
+            }
+            
+            st.success("📊 Electricity Source Comparison")
+            
+            comparison_data = {
+                "Source": [],
+                "Monthly Cost": [],
+                "Annual Cost": [],
+                "CO₂/month (kg)": [],
+                "Annual Savings vs Grid": []
+            }
+            
+            grid_annual = monthly_kwh * 12 * grid_rate
+            
+            for source, data in sources.items():
+                monthly_cost = monthly_kwh * data["rate"]
+                annual_cost = monthly_cost * 12
+                co2_monthly = monthly_kwh * data["co2_per_kwh"]
+                savings = grid_annual - annual_cost
+                
+                comparison_data["Source"].append(source)
+                comparison_data["Monthly Cost"].append(f"${monthly_cost:.2f}")
+                comparison_data["Annual Cost"].append(f"${annual_cost:.2f}")
+                comparison_data["CO₂/month (kg)"].append(f"{co2_monthly:.1f}")
+                comparison_data["Annual Savings vs Grid"].append(f"${savings:.2f}" if savings > 0 else "-")
+            
+            df = pd.DataFrame(comparison_data)
+            st.dataframe(df)
+    
+    elif comparison_type == "🔥 Heating Systems":
+        st.markdown("#### Compare Heating Systems")
+        
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            heating_sqft = st.number_input(
+                "Home size (sq ft)",
+                min_value=0,
+                value=2000,
+                step=100,
+                key="heating_sqft"
+            )
+            
+            heating_months = st.slider(
+                "Heating months per year",
+                min_value=1,
+                max_value=12,
+                value=5,
+                key="heating_months"
+            )
+        
+        with col2:
+            climate = st.selectbox(
+                "Climate Zone",
+                ["Mild", "Moderate", "Cold", "Very Cold"],
+                index=1,
+                key="climate_zone"
+            )
+        
+        if st.button("Compare Heating Systems", key="compare_heating"):
+            # BTU needs based on climate
+            btu_per_sqft = {"Mild": 25, "Moderate": 35, "Cold": 45, "Very Cold": 55}
+            annual_btu = heating_sqft * btu_per_sqft[climate] * heating_months * 30 * 8  # 8 hours/day
+            
+            systems = {
+                "Natural Gas Furnace": {"efficiency": 0.92, "fuel_cost_per_btu": 0.000012, "co2_per_btu": 0.000053},
+                "Electric Baseboard": {"efficiency": 1.0, "fuel_cost_per_btu": 0.000041, "co2_per_btu": 0.000123},
+                "Heat Pump": {"efficiency": 3.0, "fuel_cost_per_btu": 0.000014, "co2_per_btu": 0.000041},
+                "Geothermal Heat Pump": {"efficiency": 4.5, "fuel_cost_per_btu": 0.000009, "co2_per_btu": 0.000027},
+                "Propane Furnace": {"efficiency": 0.85, "fuel_cost_per_btu": 0.000025, "co2_per_btu": 0.000063},
+                "Wood Pellet Stove": {"efficiency": 0.80, "fuel_cost_per_btu": 0.000010, "co2_per_btu": 0.000010}
+            }
+            
+            st.success("📊 Heating System Comparison")
+            
+            comparison_data = {
+                "System": [],
+                "Efficiency": [],
+                "Annual Cost": [],
+                "CO₂/year (kg)": [],
+                "10-Year Cost": []
+            }
+            
+            for system, data in systems.items():
+                effective_btu = annual_btu / data["efficiency"]
+                annual_cost = effective_btu * data["fuel_cost_per_btu"]
+                annual_co2 = effective_btu * data["co2_per_btu"]
+                
+                comparison_data["System"].append(system)
+                comparison_data["Efficiency"].append(f"{data['efficiency'] * 100:.0f}%" if data["efficiency"] <= 1 else f"{data['efficiency']:.1f} COP")
+                comparison_data["Annual Cost"].append(f"${annual_cost:.0f}")
+                comparison_data["CO₂/year (kg)"].append(f"{annual_co2:.0f}")
+                comparison_data["10-Year Cost"].append(f"${annual_cost * 10:.0f}")
+            
+            df = pd.DataFrame(comparison_data)
+            st.dataframe(df)
+    
+    elif comparison_type == "❄️ Cooling Systems":
+        st.markdown("#### Compare Cooling Systems")
+        
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            cooling_sqft = st.number_input(
+                "Home size (sq ft)",
+                min_value=0,
+                value=2000,
+                step=100,
+                key="cooling_sqft"
+            )
+            
+            cooling_months = st.slider(
+                "Cooling months per year",
+                min_value=1,
+                max_value=12,
+                value=4,
+                key="cooling_months"
+            )
+        
+        with col2:
+            hours_per_day = st.slider(
+                "Hours of AC use per day",
+                min_value=1,
+                max_value=24,
+                value=8,
+                key="ac_hours"
+            )
+        
+        if st.button("Compare Cooling Systems", key="compare_cooling"):
+            # Approximate BTU/hr needed
+            btu_per_sqft_hr = 20
+            total_hours = cooling_months * 30 * hours_per_day
+            annual_btu = cooling_sqft * btu_per_sqft_hr * total_hours
+            
+            systems = {
+                "Window AC (SEER 10)": {"seer": 10, "install_cost": 400},
+                "Central AC (SEER 14)": {"seer": 14, "install_cost": 4000},
+                "Central AC (SEER 18)": {"seer": 18, "install_cost": 6000},
+                "Heat Pump (SEER 20)": {"seer": 20, "install_cost": 7500},
+                "Ductless Mini-Split": {"seer": 22, "install_cost": 5000},
+                "Evaporative Cooler": {"seer": 40, "install_cost": 2500}  # Very efficient in dry climates
+            }
+            
+            elec_rate = 0.14  # $/kWh
+            
+            st.success("📊 Cooling System Comparison")
+            
+            comparison_data = {
+                "System": [],
+                "SEER Rating": [],
+                "Annual kWh": [],
+                "Annual Cost": [],
+                "Install Cost": [],
+                "5-Year Total": []
+            }
+            
+            for system, data in systems.items():
+                annual_kwh = annual_btu / (data["seer"] * 1000)
+                annual_cost = annual_kwh * elec_rate
+                five_year = (annual_cost * 5) + data["install_cost"]
+                
+                comparison_data["System"].append(system)
+                comparison_data["SEER Rating"].append(str(data["seer"]))
+                comparison_data["Annual kWh"].append(f"{annual_kwh:.0f}")
+                comparison_data["Annual Cost"].append(f"${annual_cost:.0f}")
+                comparison_data["Install Cost"].append(f"${data['install_cost']:,}")
+                comparison_data["5-Year Total"].append(f"${five_year:,.0f}")
+            
+            df = pd.DataFrame(comparison_data)
+            st.dataframe(df)
+    
+    elif comparison_type == "💧 Water Systems":
+        st.markdown("#### Compare Water Systems & Conservation")
+        
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            household_size = st.number_input(
+                "Household size (people)",
+                min_value=1,
+                value=4,
+                step=1,
+                key="household_size"
+            )
+            
+            water_rate = st.number_input(
+                "Water rate ($/gallon)",
+                min_value=0.0,
+                value=0.005,
+                step=0.001,
+                format="%.3f",
+                key="water_rate_comp"
+            )
+        
+        with col2:
+            current_gpd = st.number_input(
+                "Current usage (gallons/person/day)",
+                min_value=0.0,
+                value=80.0,
+                step=5.0,
+                key="current_gpd"
+            )
+        
+        if st.button("Compare Water Systems", key="compare_water"):
+            baseline_annual = household_size * current_gpd * 365
+            
+            systems = {
+                "Standard (No Changes)": {"reduction": 0, "install_cost": 0},
+                "Low-Flow Fixtures": {"reduction": 0.20, "install_cost": 200},
+                "Dual-Flush Toilets": {"reduction": 0.15, "install_cost": 800},
+                "Rainwater Harvesting": {"reduction": 0.30, "install_cost": 3000},
+                "Greywater System": {"reduction": 0.35, "install_cost": 5000},
+                "Full Conservation Package": {"reduction": 0.50, "install_cost": 8000}
+            }
+            
+            st.success("📊 Water System Comparison")
+            
+            comparison_data = {
+                "System": [],
+                "Annual Gallons": [],
+                "Annual Cost": [],
+                "Water Saved": [],
+                "Annual Savings": [],
+                "Payback (Years)": []
+            }
+            
+            baseline_cost = baseline_annual * water_rate
+            
+            for system, data in systems.items():
+                annual_gallons = baseline_annual * (1 - data["reduction"])
+                annual_cost = annual_gallons * water_rate
+                water_saved = baseline_annual * data["reduction"]
+                annual_savings = baseline_cost - annual_cost
+                payback = data["install_cost"] / annual_savings if annual_savings > 0 else 0
+                
+                comparison_data["System"].append(system)
+                comparison_data["Annual Gallons"].append(f"{annual_gallons:,.0f}")
+                comparison_data["Annual Cost"].append(f"${annual_cost:.0f}")
+                comparison_data["Water Saved"].append(f"{water_saved:,.0f} gal")
+                comparison_data["Annual Savings"].append(f"${annual_savings:.0f}")
+                comparison_data["Payback (Years)"].append(f"{payback:.1f}" if payback > 0 else "-")
+            
+            df = pd.DataFrame(comparison_data)
+            st.dataframe(df)
+    
+    elif comparison_type == "🚗 Transportation Fuel":
+        st.markdown("#### Compare Transportation Options")
+        
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            annual_miles = st.number_input(
+                "Annual miles driven",
+                min_value=0,
+                value=12000,
+                step=1000,
+                key="annual_miles"
+            )
+            
+            gas_price = st.number_input(
+                "Gas price ($/gallon)",
+                min_value=0.0,
+                value=3.50,
+                step=0.10,
+                format="%.2f",
+                key="gas_price"
+            )
+        
+        with col2:
+            elec_price = st.number_input(
+                "Electricity price ($/kWh)",
+                min_value=0.0,
+                value=0.14,
+                step=0.01,
+                format="%.2f",
+                key="elec_price_car"
+            )
+        
+        if st.button("Compare Transportation", key="compare_transport"):
+            vehicles = {
+                "Gas Car (25 MPG)": {"mpg": 25, "type": "gas", "co2_per_mile": 0.89},
+                "Gas Car (35 MPG)": {"mpg": 35, "type": "gas", "co2_per_mile": 0.64},
+                "Hybrid (50 MPG)": {"mpg": 50, "type": "gas", "co2_per_mile": 0.44},
+                "Plug-in Hybrid (100 MPGe)": {"mpg": 100, "type": "hybrid", "co2_per_mile": 0.25},
+                "Electric Vehicle (4 mi/kWh)": {"mi_per_kwh": 4, "type": "electric", "co2_per_mile": 0.12},
+                "Electric Vehicle (3 mi/kWh)": {"mi_per_kwh": 3, "type": "electric", "co2_per_mile": 0.16}
+            }
+            
+            st.success("📊 Transportation Comparison")
+            
+            comparison_data = {
+                "Vehicle Type": [],
+                "Annual Fuel Cost": [],
+                "CO₂/year (lbs)": [],
+                "5-Year Fuel Cost": [],
+                "Savings vs 25 MPG": []
+            }
+            
+            baseline_cost = (annual_miles / 25) * gas_price * 5
+            
+            for vehicle, data in vehicles.items():
+                if data["type"] == "gas" or data["type"] == "hybrid":
+                    annual_cost = (annual_miles / data["mpg"]) * gas_price
+                else:
+                    annual_cost = (annual_miles / data["mi_per_kwh"]) * elec_price
+                
+                annual_co2 = annual_miles * data["co2_per_mile"]
+                five_year = annual_cost * 5
+                savings = baseline_cost - five_year
+                
+                comparison_data["Vehicle Type"].append(vehicle)
+                comparison_data["Annual Fuel Cost"].append(f"${annual_cost:.0f}")
+                comparison_data["CO₂/year (lbs)"].append(f"{annual_co2:.0f}")
+                comparison_data["5-Year Fuel Cost"].append(f"${five_year:,.0f}")
+                comparison_data["Savings vs 25 MPG"].append(f"${savings:,.0f}" if savings > 0 else "-")
+            
+            df = pd.DataFrame(comparison_data)
+            st.dataframe(df)
+    
+    elif comparison_type == "🏡 Home Energy Audit":
+        st.markdown("#### Quick Home Energy Audit")
+        
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            home_sqft = st.number_input(
+                "Home size (sq ft)",
+                min_value=0,
+                value=2000,
+                step=100,
+                key="audit_sqft"
+            )
+            
+            home_age = st.selectbox(
+                "Home age",
+                ["New (< 5 years)", "Modern (5-15 years)", "Older (15-30 years)", "Vintage (30+ years)"],
+                index=2,
+                key="home_age"
+            )
+            
+            current_bill = st.number_input(
+                "Average monthly energy bill ($)",
+                min_value=0.0,
+                value=200.0,
+                step=10.0,
+                key="current_bill"
+            )
+        
+        with col2:
+            insulation = st.selectbox(
+                "Insulation quality",
+                ["Poor", "Average", "Good", "Excellent"],
+                index=1,
+                key="insulation_quality"
+            )
+            
+            window_type = st.selectbox(
+                "Window type",
+                ["Single pane", "Double pane", "Triple pane", "Low-E"],
+                index=1,
+                key="window_type"
+            )
+            
+            hvac_age = st.slider(
+                "HVAC system age (years)",
+                min_value=0,
+                max_value=25,
+                value=10,
+                key="hvac_age"
+            )
+        
+        if st.button("Generate Audit Report", key="audit_report"):
+            # Calculate potential savings
+            age_factor = {"New (< 5 years)": 0.05, "Modern (5-15 years)": 0.10, "Older (15-30 years)": 0.20, "Vintage (30+ years)": 0.35}
+            insulation_factor = {"Poor": 0.20, "Average": 0.10, "Good": 0.05, "Excellent": 0.02}
+            window_factor = {"Single pane": 0.15, "Double pane": 0.08, "Triple pane": 0.03, "Low-E": 0.02}
+            hvac_factor = min(hvac_age * 0.01, 0.20)
+            
+            total_potential = age_factor[home_age] + insulation_factor[insulation] + window_factor[window_type] + hvac_factor
+            monthly_savings_potential = current_bill * total_potential
+            
+            st.success("📊 Home Energy Audit Results")
+            
+            st.markdown("#### 💰 Savings Potential")
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                st.metric("Monthly Savings", f"${monthly_savings_potential:.0f}")
+            with col2:
+                st.metric("Annual Savings", f"${monthly_savings_potential * 12:.0f}")
+            with col3:
+                st.metric("Efficiency Score", f"{100 - (total_potential * 100):.0f}/100")
+            
+            st.markdown("#### 🔧 Recommended Improvements")
+            
+            improvements = []
+            if insulation in ["Poor", "Average"]:
+                improvements.append(("🏠 Upgrade Insulation", insulation_factor[insulation] * current_bill * 12))
+            if window_type in ["Single pane", "Double pane"]:
+                improvements.append(("🪟 Upgrade Windows", window_factor[window_type] * current_bill * 12))
+            if hvac_age > 10:
+                improvements.append(("❄️ Replace HVAC System", hvac_factor * current_bill * 12))
+            improvements.append(("💡 LED Lighting", current_bill * 0.05 * 12))
+            improvements.append(("🌡️ Smart Thermostat", current_bill * 0.08 * 12))
+            
+            for improvement, annual_savings in sorted(improvements, key=lambda x: x[1], reverse=True):
+                st.write(f"- {improvement}: Save ~${annual_savings:.0f}/year")
+
+
+def display_utility_comparison(comparison):
+    """Display utility comparison results."""
+    st.success("📊 Comparison Complete!")
+    
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
         st.metric(
-            "Annual Savings",
-            f"${comparison['annual_savings']:.2f}",
-            delta=f"+${comparison['annual_savings']:.2f}/year"
+            "Current Monthly Cost",
+            f"${comparison['current_monthly_cost']:.2f}"
         )
-        
-        # Breakdown
-        st.markdown("#### 💡 Savings Breakdown")
-        breakdown = comparison['breakdown']
-        
-        breakdown_data = {
-            "Category": ["Electricity", "Natural Gas", "Water"],
-            "Monthly Savings": [
-                breakdown['electricity_savings'],
-                breakdown['gas_savings'],
-                breakdown['water_savings']
-            ]
-        }
-        
-        df = pd.DataFrame(breakdown_data)
-        st.bar_chart(df.set_index("Category"))
+    
+    with col2:
+        st.metric(
+            "Optimized Monthly Cost",
+            f"${comparison['optimized_monthly_cost']:.2f}"
+        )
+    
+    with col3:
+        st.metric(
+            "Monthly Savings",
+            f"${comparison['monthly_savings']:.2f}",
+            delta=f"-{comparison['savings_percentage']:.1f}%",
+            delta_color="inverse"
+        )
+    
+    st.metric(
+        "Annual Savings",
+        f"${comparison['annual_savings']:.2f}",
+        delta=f"+${comparison['annual_savings']:.2f}/year"
+    )
+    
+    # Breakdown
+    st.markdown("#### 💡 Savings Breakdown")
+    breakdown = comparison['breakdown']
+    
+    breakdown_data = {
+        "Category": ["Electricity", "Natural Gas", "Water"],
+        "Monthly Savings": [
+            breakdown['electricity_savings'],
+            breakdown['gas_savings'],
+            breakdown['water_savings']
+        ]
+    }
+    
+    df = pd.DataFrame(breakdown_data)
+    st.bar_chart(df.set_index("Category"))
 
 
 def render_carbon_credit_calculator(calculator: FinancialCalculator):
@@ -1942,96 +2686,567 @@ def render_environmental_dashboard():
     st.subheader("📈 Environmental Impact Dashboard")
     st.markdown("Track and compare environmental impacts across different activities and categories.")
     
-    # Environmental impact comparison
-    st.markdown("### 🌍 Category Impact Comparison")
+    # Create dashboard tabs
+    dash_tab1, dash_tab2, dash_tab3, dash_tab4, dash_tab5 = st.tabs([
+        "🔢 Impact Calculator",
+        "📊 Activity Comparison",
+        "🎯 Goal Tracker",
+        "🌍 Footprint Analyzer",
+        "💡 Eco Tips"
+    ])
     
-    # Sample comparison data
-    categories_data = {
-        "Category": ["Transport", "Food", "Household", "Lifestyle", "Energy"],
-        "CO₂ (kg/day)": [4.5, 3.8, 2.2, 1.5, 3.0],
-        "Water (L/day)": [5, 850, 150, 50, 100],
-        "Energy (kWh/day)": [2, 0.5, 8, 1, 12],
-        "Waste (kg/day)": [0.1, 0.8, 0.3, 0.2, 0.1]
-    }
+    with dash_tab1:
+        render_impact_calculator()
     
-    df = pd.DataFrame(categories_data)
+    with dash_tab2:
+        render_activity_comparison()
     
-    # Select metric to visualize
-    metric = st.selectbox(
-        "Select metric to compare:",
-        ["CO₂ (kg/day)", "Water (L/day)", "Energy (kWh/day)", "Waste (kg/day)"]
+    with dash_tab3:
+        render_goal_tracker()
+    
+    with dash_tab4:
+        render_footprint_analyzer()
+    
+    with dash_tab5:
+        render_eco_tips()
+
+
+def render_impact_calculator():
+    """Interactive environmental impact calculator."""
+    st.markdown("### 🔢 Personal Impact Calculator")
+    st.markdown("Enter your daily activities to calculate your environmental footprint.")
+    
+    # Transport section
+    st.markdown("#### 🚗 Transportation")
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        car_km = st.number_input("Car driving (km/day)", min_value=0.0, value=20.0, step=5.0, key="dash_car")
+        car_type = st.selectbox("Car type", ["Petrol", "Diesel", "Hybrid", "Electric", "None"], key="dash_car_type")
+    
+    with col2:
+        public_transit = st.number_input("Public transit (km/day)", min_value=0.0, value=0.0, step=5.0, key="dash_transit")
+        flights_month = st.number_input("Flights per month", min_value=0, value=0, step=1, key="dash_flights")
+    
+    with col3:
+        bike_walk = st.number_input("Bike/Walk (km/day)", min_value=0.0, value=2.0, step=1.0, key="dash_bike")
+    
+    # Home section
+    st.markdown("#### 🏠 Home Energy")
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        electricity_kwh = st.number_input("Electricity (kWh/day)", min_value=0.0, value=10.0, step=1.0, key="dash_elec")
+        renewable_percent = st.slider("Renewable energy %", 0, 100, 0, key="dash_renewable")
+    
+    with col2:
+        gas_usage = st.number_input("Natural gas (therms/day)", min_value=0.0, value=1.0, step=0.1, key="dash_gas")
+        home_size = st.selectbox("Home size", ["Apartment", "Small house", "Medium house", "Large house"], key="dash_home")
+    
+    with col3:
+        heating_type = st.selectbox("Heating type", ["Gas", "Electric", "Heat pump", "Oil", "Wood"], key="dash_heat")
+    
+    # Food section
+    st.markdown("#### 🍽️ Food & Diet")
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        diet_type = st.selectbox("Diet type", ["Heavy meat", "Average", "Low meat", "Vegetarian", "Vegan"], key="dash_diet")
+    
+    with col2:
+        local_food = st.slider("Local food %", 0, 100, 30, key="dash_local")
+    
+    with col3:
+        food_waste = st.selectbox("Food waste level", ["High", "Average", "Low", "Minimal"], key="dash_waste")
+    
+    # Water section
+    st.markdown("#### 💧 Water Usage")
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        shower_mins = st.number_input("Shower time (mins/day)", min_value=0, value=10, step=1, key="dash_shower")
+    
+    with col2:
+        water_fixtures = st.selectbox("Water fixtures", ["Standard", "Low-flow", "Ultra low-flow"], key="dash_fixtures")
+    
+    with col3:
+        garden_water = st.selectbox("Garden watering", ["None", "Minimal", "Moderate", "Heavy"], key="dash_garden")
+    
+    # Calculate impact
+    if st.button("🔍 Calculate My Impact", key="calc_impact"):
+        # CO2 calculations (kg/day)
+        car_emissions = {"Petrol": 0.21, "Diesel": 0.18, "Hybrid": 0.10, "Electric": 0.05, "None": 0}
+        co2_transport = car_km * car_emissions.get(car_type, 0.21) + public_transit * 0.05 + flights_month * 90 / 30
+        
+        electricity_factor = 0.42 * (1 - renewable_percent/100)
+        co2_home = electricity_kwh * electricity_factor + gas_usage * 5.3
+        
+        diet_emissions = {"Heavy meat": 7.0, "Average": 4.5, "Low meat": 3.0, "Vegetarian": 2.0, "Vegan": 1.5}
+        co2_food = diet_emissions.get(diet_type, 4.5) * (1 - local_food/200)
+        
+        total_co2 = co2_transport + co2_home + co2_food
+        
+        # Water calculations (liters/day)
+        shower_water = shower_mins * {"Standard": 12, "Low-flow": 8, "Ultra low-flow": 5}.get(water_fixtures, 12)
+        garden_factors = {"None": 0, "Minimal": 20, "Moderate": 50, "Heavy": 100}
+        total_water = shower_water + 50 + garden_factors.get(garden_water, 20)  # +50 for other uses
+        
+        # Energy (kWh/day)
+        total_energy = electricity_kwh + gas_usage * 29.3  # Convert therms to kWh equivalent
+        
+        # Display results
+        st.success("📊 Your Daily Environmental Impact")
+        
+        col1, col2, col3, col4 = st.columns(4)
+        
+        with col1:
+            st.metric("🌡️ CO₂ Emissions", f"{total_co2:.1f} kg/day", 
+                     delta=f"{(total_co2 - 15) * -1:.1f} vs avg" if total_co2 < 15 else f"+{total_co2 - 15:.1f} vs avg",
+                     delta_color="inverse" if total_co2 > 15 else "normal")
+        
+        with col2:
+            st.metric("💧 Water Usage", f"{total_water:.0f} L/day",
+                     delta=f"{(total_water - 150) * -1:.0f} vs avg" if total_water < 150 else f"+{total_water - 150:.0f} vs avg",
+                     delta_color="inverse" if total_water > 150 else "normal")
+        
+        with col3:
+            st.metric("⚡ Energy Use", f"{total_energy:.1f} kWh/day",
+                     delta=f"{(total_energy - 25) * -1:.1f} vs avg" if total_energy < 25 else f"+{total_energy - 25:.1f} vs avg",
+                     delta_color="inverse" if total_energy > 25 else "normal")
+        
+        with col4:
+            annual_co2 = total_co2 * 365 / 1000
+            st.metric("📅 Annual CO₂", f"{annual_co2:.1f} tons/year")
+        
+        # Impact breakdown chart
+        st.markdown("#### 📈 Impact Breakdown")
+        breakdown_data = {
+            "Category": ["Transport", "Home Energy", "Food"],
+            "CO₂ (kg/day)": [co2_transport, co2_home, co2_food]
+        }
+        df = pd.DataFrame(breakdown_data)
+        st.bar_chart(df.set_index("Category"))
+        
+        # Equivalents
+        st.markdown("#### 🌳 What This Means")
+        trees_needed = int(total_co2 * 365 / 21)  # ~21 kg CO2/tree/year
+        driving_equiv = int(total_co2 / 0.21)  # km in petrol car
+        
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            st.info(f"🌲 You'd need **{trees_needed} trees** to offset your annual CO₂")
+        with col2:
+            st.info(f"🚗 Daily impact = driving **{driving_equiv} km** in a petrol car")
+        with col3:
+            showers = int(total_water / 60)  # 60L per 5-min shower
+            st.info(f"🚿 Water usage = **{showers}** five-minute showers")
+
+
+def render_activity_comparison():
+    """Compare environmental impact of different activities."""
+    st.markdown("### 📊 Activity Impact Comparison")
+    st.markdown("Compare the environmental cost of everyday activities.")
+    
+    comparison_category = st.selectbox(
+        "Select category to compare",
+        ["🚗 Transportation", "🍽️ Food & Meals", "🏠 Household", "🛍️ Shopping", "🎮 Entertainment"],
+        key="compare_category"
     )
     
-    st.bar_chart(df.set_index("Category")[metric])
+    if comparison_category == "🚗 Transportation":
+        st.markdown("#### CO₂ Emissions per 10 km traveled")
+        transport_data = {
+            "Mode": ["Petrol Car", "Diesel Car", "Hybrid Car", "Electric Car", "Motorcycle", "Bus", "Train", "E-bike", "Bicycle", "Walking"],
+            "CO₂ (kg)": [2.1, 1.8, 1.0, 0.5, 1.2, 0.4, 0.1, 0.05, 0, 0],
+            "Cost ($)": [3.0, 2.5, 1.5, 0.5, 1.0, 2.0, 1.5, 0.10, 0, 0],
+            "Time (min)": [15, 15, 15, 15, 12, 25, 18, 25, 30, 120]
+        }
+        df = pd.DataFrame(transport_data)
+        
+        metric = st.radio("View by:", ["CO₂ (kg)", "Cost ($)", "Time (min)"], horizontal=True, key="transport_metric")
+        st.bar_chart(df.set_index("Mode")[metric])
+        st.dataframe(df)
+        
+    elif comparison_category == "🍽️ Food & Meals":
+        st.markdown("#### Environmental Impact per Meal")
+        food_data = {
+            "Meal Type": ["Beef steak", "Pork chop", "Chicken breast", "Fish fillet", "Eggs & cheese", "Vegetarian", "Vegan"],
+            "CO₂ (kg)": [6.5, 2.5, 1.5, 1.2, 1.0, 0.5, 0.3],
+            "Water (L)": [2000, 800, 500, 400, 300, 200, 100],
+            "Land (m²)": [25, 8, 5, 1, 4, 2, 1]
+        }
+        df = pd.DataFrame(food_data)
+        
+        metric = st.radio("View by:", ["CO₂ (kg)", "Water (L)", "Land (m²)"], horizontal=True, key="food_metric")
+        st.bar_chart(df.set_index("Meal Type")[metric])
+        st.dataframe(df)
+        
+    elif comparison_category == "🏠 Household":
+        st.markdown("#### Daily Household Activities Impact")
+        household_data = {
+            "Activity": ["10-min shower", "Bath", "Dishwasher load", "Washing machine", "1 hour AC", "1 hour heating", "Cooking (gas)", "Cooking (electric)"],
+            "CO₂ (kg)": [0.8, 1.5, 0.5, 0.6, 1.2, 2.0, 0.3, 0.4],
+            "Water (L)": [80, 150, 15, 50, 0, 0, 0, 0],
+            "Energy (kWh)": [2.0, 4.0, 1.5, 1.5, 3.0, 5.0, 0.8, 1.0]
+        }
+        df = pd.DataFrame(household_data)
+        
+        metric = st.radio("View by:", ["CO₂ (kg)", "Water (L)", "Energy (kWh)"], horizontal=True, key="house_metric")
+        st.bar_chart(df.set_index("Activity")[metric])
+        st.dataframe(df)
+        
+    elif comparison_category == "🛍️ Shopping":
+        st.markdown("#### Shopping Choices Impact")
+        shopping_data = {
+            "Item": ["New smartphone", "Refurb. smartphone", "New jeans", "Second-hand jeans", "New cotton shirt", "Plastic bag", "Reusable bag"],
+            "CO₂ (kg)": [70, 15, 25, 2, 8, 0.1, 1.0],
+            "Water (L)": [12000, 0, 7500, 0, 2500, 50, 100],
+            "Waste (g)": [200, 50, 100, 10, 50, 5, 0]
+        }
+        df = pd.DataFrame(shopping_data)
+        
+        metric = st.radio("View by:", ["CO₂ (kg)", "Water (L)", "Waste (g)"], horizontal=True, key="shop_metric")
+        st.bar_chart(df.set_index("Item")[metric])
+        st.dataframe(df)
+        
+    elif comparison_category == "🎮 Entertainment":
+        st.markdown("#### Entertainment Activities (per hour)")
+        entertainment_data = {
+            "Activity": ["Video streaming (HD)", "Video streaming (4K)", "Gaming (console)", "Gaming (PC)", "Reading (e-reader)", "Reading (lamp)", "Outdoor sports"],
+            "CO₂ (kg)": [0.036, 0.08, 0.15, 0.25, 0.003, 0.01, 0],
+            "Energy (kWh)": [0.1, 0.2, 0.4, 0.6, 0.008, 0.03, 0]
+        }
+        df = pd.DataFrame(entertainment_data)
+        
+        metric = st.radio("View by:", ["CO₂ (kg)", "Energy (kWh)"], horizontal=True, key="ent_metric")
+        st.bar_chart(df.set_index("Activity")[metric])
+        st.dataframe(df)
+
+
+def render_goal_tracker():
+    """Track environmental sustainability goals."""
+    st.markdown("### 🎯 Sustainability Goal Tracker")
+    st.markdown("Set and track your environmental goals.")
     
-    # Environmental tips by category
-    st.markdown("### 💡 Quick Wins by Category")
+    # Initialize session state for goals
+    if 'env_goals' not in st.session_state:
+        st.session_state.env_goals = {
+            'co2_target': 10.0,
+            'water_target': 120,
+            'energy_target': 15.0,
+            'waste_target': 0.5
+        }
+    
+    st.markdown("#### 📝 Set Your Daily Targets")
     
     col1, col2 = st.columns(2)
     
     with col1:
-        with st.expander("🚗 Transport", expanded=True):
-            st.markdown("""
-            - Switch to public transit (saves ~3 kg CO₂/day)
-            - Carpool when possible
-            - Consider an e-bike for short trips
-            - Work from home 1-2 days/week
-            """)
-        
-        with st.expander("🍔 Food"):
-            st.markdown("""
-            - Reduce beef consumption by 50%
-            - Choose local & seasonal produce
-            - Minimize food waste
-            - Try plant-based meals 2x/week
-            """)
+        co2_target = st.number_input("🌡️ CO₂ Target (kg/day)", min_value=1.0, max_value=50.0, 
+                                     value=st.session_state.env_goals['co2_target'], step=0.5, key="goal_co2")
+        water_target = st.number_input("💧 Water Target (L/day)", min_value=50, max_value=500, 
+                                       value=st.session_state.env_goals['water_target'], step=10, key="goal_water")
     
     with col2:
-        with st.expander("🏠 Household", expanded=True):
-            st.markdown("""
-            - Switch to LED bulbs (saves 75% energy)
-            - Fix leaky faucets (saves 10+ L/day)
-            - Use cold water for laundry
-            - Install smart thermostat
-            """)
-        
-        with st.expander("♻️ Waste"):
-            st.markdown("""
-            - Use reusable bags & bottles
-            - Compost food scraps
-            - Recycle properly
-            - Choose products with less packaging
-            """)
+        energy_target = st.number_input("⚡ Energy Target (kWh/day)", min_value=5.0, max_value=100.0, 
+                                        value=st.session_state.env_goals['energy_target'], step=1.0, key="goal_energy")
+        waste_target = st.number_input("🗑️ Waste Target (kg/day)", min_value=0.1, max_value=5.0, 
+                                       value=st.session_state.env_goals['waste_target'], step=0.1, key="goal_waste")
     
-    # Sustainability goals tracker
-    st.markdown("### 🎯 Set Your Goals")
+    if st.button("💾 Save Goals", key="save_goals"):
+        st.session_state.env_goals = {
+            'co2_target': co2_target,
+            'water_target': water_target,
+            'energy_target': energy_target,
+            'waste_target': waste_target
+        }
+        st.success("✅ Goals saved successfully!")
     
-    col1, col2, col3, col4 = st.columns(4)
+    # Log today's activity
+    st.markdown("#### 📊 Log Today's Activity")
+    
+    col1, col2 = st.columns(2)
     
     with col1:
-        co2_goal = st.number_input("Daily CO₂ Target (kg)", min_value=0.0, value=5.0, step=0.5)
+        actual_co2 = st.number_input("Today's CO₂ (kg)", min_value=0.0, value=12.0, step=0.5, key="actual_co2")
+        actual_water = st.number_input("Today's Water (L)", min_value=0, value=140, step=10, key="actual_water")
+    
     with col2:
-        water_goal = st.number_input("Daily Water Target (L)", min_value=0, value=150, step=10)
-    with col3:
-        energy_goal = st.number_input("Daily Energy Target (kWh)", min_value=0.0, value=10.0, step=0.5)
-    with col4:
-        waste_goal = st.number_input("Daily Waste Target (kg)", min_value=0.0, value=1.0, step=0.1)
+        actual_energy = st.number_input("Today's Energy (kWh)", min_value=0.0, value=18.0, step=1.0, key="actual_energy")
+        actual_waste = st.number_input("Today's Waste (kg)", min_value=0.0, value=0.8, step=0.1, key="actual_waste")
     
-    if st.button("💾 Save Goals"):
-        st.success("✅ Goals saved! Track your progress by uploading activity data.")
+    if st.button("📈 Check Progress", key="check_progress"):
+        st.markdown("#### 📊 Today's Progress")
+        
+        col1, col2, col3, col4 = st.columns(4)
+        
+        with col1:
+            co2_pct = (actual_co2 / co2_target) * 100
+            color = "🟢" if co2_pct <= 100 else "🔴"
+            st.metric(f"{color} CO₂", f"{actual_co2}/{co2_target} kg", 
+                     delta=f"{co2_target - actual_co2:.1f} remaining" if actual_co2 < co2_target else f"+{actual_co2 - co2_target:.1f} over",
+                     delta_color="normal" if actual_co2 < co2_target else "inverse")
+            st.progress(min(co2_pct / 100, 1.0))
+        
+        with col2:
+            water_pct = (actual_water / water_target) * 100
+            color = "🟢" if water_pct <= 100 else "🔴"
+            st.metric(f"{color} Water", f"{actual_water}/{water_target} L",
+                     delta=f"{water_target - actual_water} remaining" if actual_water < water_target else f"+{actual_water - water_target} over",
+                     delta_color="normal" if actual_water < water_target else "inverse")
+            st.progress(min(water_pct / 100, 1.0))
+        
+        with col3:
+            energy_pct = (actual_energy / energy_target) * 100
+            color = "🟢" if energy_pct <= 100 else "🔴"
+            st.metric(f"{color} Energy", f"{actual_energy}/{energy_target} kWh",
+                     delta=f"{energy_target - actual_energy:.1f} remaining" if actual_energy < energy_target else f"+{actual_energy - energy_target:.1f} over",
+                     delta_color="normal" if actual_energy < energy_target else "inverse")
+            st.progress(min(energy_pct / 100, 1.0))
+        
+        with col4:
+            waste_pct = (actual_waste / waste_target) * 100
+            color = "🟢" if waste_pct <= 100 else "🔴"
+            st.metric(f"{color} Waste", f"{actual_waste}/{waste_target} kg",
+                     delta=f"{waste_target - actual_waste:.1f} remaining" if actual_waste < waste_target else f"+{actual_waste - waste_target:.1f} over",
+                     delta_color="normal" if actual_waste < waste_target else "inverse")
+            st.progress(min(waste_pct / 100, 1.0))
+        
+        # Overall score
+        overall_score = 100 - ((co2_pct + water_pct + energy_pct + waste_pct) / 4 - 100)
+        overall_score = max(0, min(100, overall_score))
+        
+        st.markdown("---")
+        st.markdown(f"### 🏆 Today's Sustainability Score: **{overall_score:.0f}/100**")
+        
+        if overall_score >= 80:
+            st.success("🌟 Excellent! You're making great sustainable choices!")
+        elif overall_score >= 60:
+            st.info("👍 Good job! A few small changes could make you even greener.")
+        else:
+            st.warning("💡 There's room for improvement. Check the Eco Tips tab for ideas!")
+
+
+def render_footprint_analyzer():
+    """Analyze and visualize carbon footprint."""
+    st.markdown("### 🌍 Carbon Footprint Analyzer")
+    st.markdown("Understand how your footprint compares to different benchmarks.")
     
-    # Environmental equivalents
-    st.markdown("### 🌳 Impact Equivalents")
-    st.markdown("Understanding your impact in real-world terms:")
+    # Quick footprint estimate
+    st.markdown("#### ⚡ Quick Annual Footprint Estimate")
     
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        st.metric("🌲 Trees Needed", "12", help="Trees needed to offset annual CO₂")
+        country = st.selectbox("Your country", 
+                              ["USA", "UK", "Germany", "France", "Canada", "Australia", "Japan", "China", "India", "Brazil"],
+                              key="fp_country")
+        household_size = st.number_input("Household size", min_value=1, max_value=10, value=3, key="fp_household")
+    
     with col2:
-        st.metric("🚿 Showers Equivalent", "450", help="10-min showers equivalent to annual water use")
+        housing = st.selectbox("Housing type", 
+                              ["Apartment (small)", "Apartment (large)", "House (small)", "House (medium)", "House (large)"],
+                              key="fp_housing")
+        car_usage = st.selectbox("Car usage",
+                                ["No car", "Occasional", "Regular", "Daily commute", "Heavy use"],
+                                key="fp_car")
+    
     with col3:
-        st.metric("💡 Light Bulb Hours", "18,250", help="Hours a 10W LED could run on your annual energy")
+        diet = st.selectbox("Diet type",
+                           ["Vegan", "Vegetarian", "Low meat", "Average", "High meat"],
+                           key="fp_diet")
+        flights_year = st.number_input("Flights per year", min_value=0, max_value=50, value=2, key="fp_flights")
+    
+    if st.button("🔍 Analyze Footprint", key="analyze_fp"):
+        # Calculate footprint components
+        country_base = {"USA": 16, "UK": 8, "Germany": 9, "France": 6, "Canada": 15, 
+                       "Australia": 17, "Japan": 9, "China": 8, "India": 2, "Brazil": 3}
+        
+        housing_factor = {"Apartment (small)": 0.6, "Apartment (large)": 0.8, 
+                         "House (small)": 1.0, "House (medium)": 1.3, "House (large)": 1.6}
+        
+        car_factor = {"No car": 0, "Occasional": 1.5, "Regular": 3, "Daily commute": 5, "Heavy use": 8}
+        
+        diet_factor = {"Vegan": 1.5, "Vegetarian": 2, "Low meat": 2.5, "Average": 3, "High meat": 4}
+        
+        flight_emissions = flights_year * 0.5  # tons per flight
+        
+        base = country_base.get(country, 10)
+        housing_co2 = base * 0.3 * housing_factor.get(housing, 1.0) / household_size
+        transport_co2 = car_factor.get(car_usage, 3) + flight_emissions
+        food_co2 = diet_factor.get(diet, 3)
+        other_co2 = base * 0.2
+        
+        total_co2 = housing_co2 + transport_co2 + food_co2 + other_co2
+        
+        st.success("📊 Your Estimated Annual Carbon Footprint")
+        
+        col1, col2 = st.columns([1, 2])
+        
+        with col1:
+            st.metric("🌡️ Total Footprint", f"{total_co2:.1f} tons CO₂/year")
+            
+            world_avg = 4.5
+            country_avg = country_base.get(country, 10)
+            
+            st.markdown("**Comparison:**")
+            st.write(f"🌍 World average: {world_avg} tons")
+            st.write(f"🏳️ {country} average: {country_avg} tons")
+            
+            if total_co2 < world_avg:
+                st.success(f"✅ {((world_avg - total_co2) / world_avg * 100):.0f}% below world average!")
+            else:
+                st.warning(f"⚠️ {((total_co2 - world_avg) / world_avg * 100):.0f}% above world average")
+        
+        with col2:
+            breakdown = {
+                "Category": ["Housing", "Transport", "Food", "Other"],
+                "CO₂ (tons)": [housing_co2, transport_co2, food_co2, other_co2]
+            }
+            df = pd.DataFrame(breakdown)
+            st.bar_chart(df.set_index("Category"))
+        
+        # Trees to offset
+        trees_needed = int(total_co2 * 1000 / 21)
+        st.markdown(f"🌳 **{trees_needed} trees** would be needed to offset your annual emissions")
+        
+        # Reduction suggestions
+        st.markdown("#### 💡 Top Ways to Reduce Your Footprint")
+        
+        suggestions = []
+        if car_usage in ["Daily commute", "Heavy use"]:
+            suggestions.append("🚗 Switch to EV or use public transit 2 days/week → Save ~2 tons/year")
+        if diet in ["Average", "High meat"]:
+            suggestions.append("🥗 Reduce meat to 2x/week → Save ~1 ton/year")
+        if flights_year > 2:
+            suggestions.append("✈️ Take one less flight per year → Save ~0.5 tons/year")
+        if housing in ["House (medium)", "House (large)"]:
+            suggestions.append("🏠 Install solar panels → Save ~3 tons/year")
+        
+        if not suggestions:
+            suggestions.append("🌟 Great job! You're already making sustainable choices!")
+        
+        for suggestion in suggestions[:4]:
+            st.write(suggestion)
+
+
+def render_eco_tips():
+    """Display eco-friendly tips and recommendations."""
+    st.markdown("### 💡 Eco-Friendly Tips & Quick Wins")
+    
+    tip_category = st.selectbox(
+        "Select category",
+        ["🏠 Home & Energy", "🚗 Transportation", "🍽️ Food & Diet", "🛍️ Shopping & Consumption", "💧 Water Conservation", "🗑️ Waste Reduction"],
+        key="tip_category"
+    )
+    
+    if tip_category == "🏠 Home & Energy":
+        st.markdown("#### Top Energy-Saving Tips")
+        tips = [
+            ("💡 Switch to LED bulbs", "Save 75% on lighting costs, ~$100/year", "Easy"),
+            ("🌡️ Install a smart thermostat", "Save 10-15% on heating/cooling, ~$200/year", "Easy"),
+            ("🔌 Unplug devices when not in use", "Save 5-10% on electricity, ~$50/year", "Easy"),
+            ("🏠 Add weatherstripping to doors/windows", "Save 10-20% on heating, ~$150/year", "Medium"),
+            ("☀️ Install solar panels", "Save 50-100% on electricity, ~$1,500/year", "Advanced"),
+            ("❄️ Upgrade to Energy Star appliances", "Save 10-50% per appliance", "Medium"),
+            ("🌬️ Use ceiling fans instead of AC", "Save up to 40% on cooling costs", "Easy"),
+            ("🧺 Wash clothes in cold water", "Save 90% of washing machine energy", "Easy")
+        ]
+        
+    elif tip_category == "🚗 Transportation":
+        tips = [
+            ("🚶 Walk or bike for trips under 3 km", "Save ~$500/year + health benefits", "Easy"),
+            ("🚌 Use public transit", "Save ~$3,000/year vs driving", "Medium"),
+            ("🚗 Carpool to work", "Save ~$1,500/year on fuel", "Easy"),
+            ("⚡ Switch to an electric vehicle", "Save ~$1,500/year on fuel + maintenance", "Advanced"),
+            ("🏠 Work from home when possible", "Save ~$2,000/year + 3 tons CO₂", "Easy"),
+            ("🚲 Get an e-bike for commuting", "Save ~$2,000/year vs car", "Medium"),
+            ("🛞 Keep tires properly inflated", "Improve fuel efficiency by 3%", "Easy"),
+            ("📍 Combine errands into one trip", "Reduce fuel use by 20%+", "Easy")
+        ]
+        
+    elif tip_category == "🍽️ Food & Diet":
+        tips = [
+            ("🥗 Have one meatless day per week", "Save 0.5 tons CO₂/year", "Easy"),
+            ("🛒 Buy local and seasonal produce", "Reduce food miles by 90%", "Easy"),
+            ("🍱 Meal prep to reduce food waste", "Save $1,500/year on food", "Medium"),
+            ("🌱 Start a small herb garden", "Save $200/year + zero transport emissions", "Easy"),
+            ("🥡 Bring reusable containers for leftovers", "Reduce packaging waste by 50%", "Easy"),
+            ("🧊 Organize your fridge properly", "Reduce food waste by 20%", "Easy"),
+            ("☕ Use a reusable coffee cup", "Save 365 disposable cups/year", "Easy"),
+            ("🍎 Choose imperfect produce", "Reduce food waste + save 30%", "Easy")
+        ]
+        
+    elif tip_category == "🛍️ Shopping & Consumption":
+        tips = [
+            ("🛍️ Bring reusable shopping bags", "Save 500+ plastic bags/year", "Easy"),
+            ("👕 Buy second-hand clothing", "Save 90% of clothing's carbon footprint", "Easy"),
+            ("📱 Buy refurbished electronics", "Save 80% of manufacturing emissions", "Medium"),
+            ("📦 Consolidate online orders", "Reduce packaging waste by 50%", "Easy"),
+            ("🔧 Repair instead of replace", "Extend product life, save money", "Medium"),
+            ("📖 Borrow or rent rarely-used items", "Reduce consumption significantly", "Easy"),
+            ("🏷️ Choose products with minimal packaging", "Reduce waste by 30%", "Easy"),
+            ("♻️ Buy products with recycled content", "Support circular economy", "Easy")
+        ]
+        
+    elif tip_category == "💧 Water Conservation":
+        tips = [
+            ("🚿 Take shorter showers (5 mins)", "Save 40+ liters per shower", "Easy"),
+            ("🚽 Install dual-flush toilet", "Save 15,000 liters/year", "Medium"),
+            ("🚰 Fix leaky faucets", "Save 10,000+ liters/year", "Easy"),
+            ("🌧️ Install rain barrel for garden", "Save 5,000+ liters/year", "Medium"),
+            ("🧹 Sweep instead of hosing driveways", "Save 300+ liters each time", "Easy"),
+            ("🧽 Only run full loads (dishwasher/washer)", "Save 3,000+ liters/year", "Easy"),
+            ("🌱 Use drought-resistant plants", "Reduce garden water by 50%", "Medium"),
+            ("💧 Install low-flow showerheads", "Save 10,000+ liters/year", "Easy")
+        ]
+        
+    else:  # Waste Reduction
+        tips = [
+            ("♻️ Learn what can be recycled locally", "Increase recycling rate by 50%", "Easy"),
+            ("🍌 Compost food scraps", "Reduce waste by 30% + create fertilizer", "Medium"),
+            ("📧 Go paperless for bills", "Save 40+ pounds of paper/year", "Easy"),
+            ("🥤 Use reusable water bottle", "Save 150+ plastic bottles/year", "Easy"),
+            ("🍽️ Use cloth napkins", "Save 2,000+ paper napkins/year", "Easy"),
+            ("📦 Refuse unnecessary receipts", "Reduce paper waste significantly", "Easy"),
+            ("🔋 Recycle batteries and e-waste properly", "Prevent toxic chemicals in landfills", "Easy"),
+            ("🛒 Buy in bulk to reduce packaging", "Reduce packaging waste by 40%", "Medium")
+        ]
+    
+    # Display tips with difficulty badges
+    for tip, impact, difficulty in tips:
+        difficulty_color = {"Easy": "🟢", "Medium": "🟡", "Advanced": "🔴"}
+        with st.expander(f"{tip}"):
+            col1, col2 = st.columns([3, 1])
+            with col1:
+                st.write(f"**Impact:** {impact}")
+            with col2:
+                st.write(f"{difficulty_color[difficulty]} {difficulty}")
+    
+    # Weekly challenge
+    st.markdown("---")
+    st.markdown("### 🏆 Weekly Eco Challenge")
+    
+    import random
+    challenges = [
+        "🚶 Walk or bike for all trips under 2 km this week",
+        "🥗 Try 3 meatless dinners this week",
+        "🔌 Unplug all devices when not in use",
+        "🚿 Take 5-minute showers only",
+        "🛍️ Refuse all single-use plastics",
+        "🌱 Start composting your food scraps",
+        "💡 Use only natural lighting during the day",
+        "📦 Make zero online orders this week"
+    ]
+    
+    if 'weekly_challenge' not in st.session_state:
+        st.session_state.weekly_challenge = random.choice(challenges)
+    
+    st.info(f"**This Week's Challenge:** {st.session_state.weekly_challenge}")
+    
+    if st.button("🔄 Get New Challenge"):
+        st.session_state.weekly_challenge = random.choice(challenges)
+        st.rerun()
 
 
 if __name__ == "__main__":

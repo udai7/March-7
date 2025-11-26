@@ -23,6 +23,17 @@ class InvestmentType(str, Enum):
     RAINWATER_HARVESTING = "rainwater_harvesting"
     SOLAR_WATER_HEATER = "solar_water_heater"
     ENERGY_EFFICIENT_APPLIANCES = "energy_efficient_appliances"
+    # New investment types
+    BATTERY_STORAGE = "battery_storage"
+    DOUBLE_GLAZED_WINDOWS = "double_glazed_windows"
+    ELECTRIC_SCOOTER = "electric_scooter"
+    COMPOSTING_SYSTEM = "composting_system"
+    SMART_POWER_STRIPS = "smart_power_strips"
+    EFFICIENT_WATER_HEATER = "efficient_water_heater"
+    SMART_IRRIGATION = "smart_irrigation"
+    GREEN_ROOF = "green_roof"
+    EV_CHARGER_HOME = "ev_charger_home"
+    ENERGY_MONITOR = "energy_monitor"
 
 
 @dataclass
@@ -179,6 +190,109 @@ class FinancialCalculator:
             "avg_annual_savings": 200,
             "lifetime_years": 12,
             "co2_savings_kg_year": 400,
+            "maintenance_annual": 0,
+        },
+        InvestmentType.BATTERY_STORAGE: {
+            "name": "Home Battery Storage (10kWh)",
+            "cost_range": (8000, 15000),
+            "avg_cost": 11000,
+            "annual_savings_range": (400, 1000),
+            "avg_annual_savings": 700,
+            "lifetime_years": 15,
+            "co2_savings_kg_year": 1500,
+            "maintenance_annual": 50,
+            "incentives_percent": 30,
+        },
+        InvestmentType.DOUBLE_GLAZED_WINDOWS: {
+            "name": "Double-Glazed Windows (Whole Home)",
+            "cost_range": (8000, 20000),
+            "avg_cost": 14000,
+            "annual_savings_range": (300, 700),
+            "avg_annual_savings": 500,
+            "lifetime_years": 30,
+            "co2_savings_kg_year": 700,
+            "maintenance_annual": 0,
+        },
+        InvestmentType.ELECTRIC_SCOOTER: {
+            "name": "Electric Scooter (vs Car Commute)",
+            "cost_range": (300, 1500),
+            "avg_cost": 800,
+            "annual_savings_range": (400, 1500),
+            "avg_annual_savings": 900,
+            "lifetime_years": 5,
+            "co2_savings_kg_year": 1200,
+            "maintenance_annual": 50,
+        },
+        InvestmentType.COMPOSTING_SYSTEM: {
+            "name": "Home Composting System",
+            "cost_range": (50, 300),
+            "avg_cost": 150,
+            "annual_savings_range": (50, 150),
+            "avg_annual_savings": 100,
+            "lifetime_years": 10,
+            "co2_savings_kg_year": 200,
+            "waste_reduction_kg_year": 200,
+            "maintenance_annual": 0,
+        },
+        InvestmentType.SMART_POWER_STRIPS: {
+            "name": "Smart Power Strips (Whole Home)",
+            "cost_range": (100, 300),
+            "avg_cost": 200,
+            "annual_savings_range": (50, 150),
+            "avg_annual_savings": 100,
+            "lifetime_years": 10,
+            "co2_savings_kg_year": 150,
+            "maintenance_annual": 0,
+        },
+        InvestmentType.EFFICIENT_WATER_HEATER: {
+            "name": "High-Efficiency Water Heater",
+            "cost_range": (1500, 4000),
+            "avg_cost": 2500,
+            "annual_savings_range": (150, 400),
+            "avg_annual_savings": 275,
+            "lifetime_years": 15,
+            "co2_savings_kg_year": 500,
+            "maintenance_annual": 25,
+        },
+        InvestmentType.SMART_IRRIGATION: {
+            "name": "Smart Irrigation System",
+            "cost_range": (500, 2000),
+            "avg_cost": 1200,
+            "annual_savings_range": (100, 300),
+            "avg_annual_savings": 200,
+            "lifetime_years": 12,
+            "water_savings_liters_year": 75000,
+            "maintenance_annual": 50,
+        },
+        InvestmentType.GREEN_ROOF: {
+            "name": "Green Roof Installation",
+            "cost_range": (10000, 30000),
+            "avg_cost": 20000,
+            "annual_savings_range": (200, 600),
+            "avg_annual_savings": 400,
+            "lifetime_years": 40,
+            "co2_savings_kg_year": 500,
+            "maintenance_annual": 200,
+        },
+        InvestmentType.EV_CHARGER_HOME: {
+            "name": "Home EV Charger (Level 2)",
+            "cost_range": (500, 2000),
+            "avg_cost": 1200,
+            "annual_savings_range": (100, 300),
+            "avg_annual_savings": 200,
+            "lifetime_years": 20,
+            "co2_savings_kg_year": 300,
+            "maintenance_annual": 25,
+            "incentives_percent": 30,
+        },
+        InvestmentType.ENERGY_MONITOR: {
+            "name": "Whole-Home Energy Monitor",
+            "cost_range": (150, 400),
+            "avg_cost": 275,
+            "annual_savings_range": (100, 250),
+            "avg_annual_savings": 175,
+            "lifetime_years": 10,
+            "co2_savings_kg_year": 300,
             "maintenance_annual": 0,
         },
     }
@@ -348,6 +462,188 @@ class FinancialCalculator:
             description=f"Switching from {current_mode} to {alternative_mode} for {daily_km}km/day"
         )
     
+    def calculate_food_cost_savings(
+        self,
+        meal_type: str = "home_cooked",
+        meals_per_week: int = 7,
+        current_option: str = "restaurant",
+        alternative_option: str = "home_cooked"
+    ) -> CostSavings:
+        """
+        Calculate cost savings from food choices.
+        
+        Args:
+            meal_type: Type of meal (lunch, dinner)
+            meals_per_week: Number of meals per week
+            current_option: Current food option
+            alternative_option: Alternative food option
+            
+        Returns:
+            CostSavings object
+        """
+        meal_costs = {
+            "restaurant": 18.0,
+            "fast_food": 10.0,
+            "takeout": 15.0,
+            "meal_kit": 12.0,
+            "home_cooked": 5.0,
+            "meal_prep": 4.0,
+            "plant_based_home": 3.5,
+            "cafeteria": 8.0,
+        }
+        
+        current_cost = meal_costs.get(current_option, 15.0) * meals_per_week
+        alt_cost = meal_costs.get(alternative_option, 5.0) * meals_per_week
+        weekly_savings = current_cost - alt_cost
+        daily_savings = weekly_savings / 7
+        
+        return CostSavings(
+            daily_savings=round(daily_savings, 2),
+            monthly_savings=round(weekly_savings * 4.33, 2),
+            annual_savings=round(weekly_savings * 52, 2),
+            lifetime_savings=round(weekly_savings * 52 * 10, 2),
+            description=f"Switching {meals_per_week} meals/week from {current_option} to {alternative_option}"
+        )
+    
+    def calculate_heating_cooling_savings(
+        self,
+        current_system: str = "gas_furnace",
+        alternative_system: str = "heat_pump",
+        monthly_heating_cost: float = 150.0,
+        monthly_cooling_cost: float = 100.0
+    ) -> CostSavings:
+        """
+        Calculate savings from heating/cooling system changes.
+        
+        Args:
+            current_system: Current HVAC system
+            alternative_system: Alternative HVAC system
+            monthly_heating_cost: Current monthly heating cost
+            monthly_cooling_cost: Current monthly cooling cost
+            
+        Returns:
+            CostSavings object
+        """
+        # Efficiency multipliers (lower = more efficient)
+        system_efficiency = {
+            "gas_furnace": 1.0,
+            "oil_furnace": 1.15,
+            "electric_resistance": 1.3,
+            "heat_pump": 0.5,
+            "geothermal": 0.35,
+            "mini_split": 0.55,
+            "central_ac": 1.0,
+            "window_ac": 1.2,
+            "evaporative_cooler": 0.4,
+        }
+        
+        current_eff = system_efficiency.get(current_system, 1.0)
+        alt_eff = system_efficiency.get(alternative_system, 0.5)
+        
+        current_monthly = (monthly_heating_cost + monthly_cooling_cost) * current_eff
+        alt_monthly = (monthly_heating_cost + monthly_cooling_cost) * alt_eff
+        monthly_savings = current_monthly - alt_monthly
+        daily_savings = monthly_savings / 30
+        
+        return CostSavings(
+            daily_savings=round(daily_savings, 2),
+            monthly_savings=round(monthly_savings, 2),
+            annual_savings=round(monthly_savings * 12, 2),
+            lifetime_savings=round(monthly_savings * 12 * 15, 2),
+            description=f"Switching from {current_system} to {alternative_system}"
+        )
+    
+    def calculate_appliance_savings(
+        self,
+        appliance_type: str = "refrigerator",
+        current_age_years: int = 15,
+        usage_hours_daily: float = 24.0
+    ) -> CostSavings:
+        """
+        Calculate savings from upgrading to energy-efficient appliances.
+        
+        Args:
+            appliance_type: Type of appliance
+            current_age_years: Age of current appliance
+            usage_hours_daily: Daily usage hours
+            
+        Returns:
+            CostSavings object
+        """
+        # kWh per hour for old vs new appliances
+        appliance_energy = {
+            "refrigerator": {"old": 0.15, "new": 0.05},
+            "washing_machine": {"old": 0.5, "new": 0.2},
+            "dryer": {"old": 3.0, "new": 1.5},
+            "dishwasher": {"old": 1.8, "new": 0.9},
+            "air_conditioner": {"old": 3.5, "new": 1.8},
+            "water_heater": {"old": 4.0, "new": 2.0},
+            "television": {"old": 0.2, "new": 0.08},
+            "computer": {"old": 0.3, "new": 0.1},
+            "microwave": {"old": 1.2, "new": 0.9},
+            "oven": {"old": 2.5, "new": 1.8},
+        }
+        
+        appliance = appliance_energy.get(appliance_type, {"old": 1.0, "new": 0.5})
+        
+        # Older appliances use more energy due to degradation
+        age_factor = 1 + (current_age_years * 0.02)  # 2% degradation per year
+        
+        old_kwh_daily = appliance["old"] * usage_hours_daily * age_factor
+        new_kwh_daily = appliance["new"] * usage_hours_daily
+        
+        savings_kwh = old_kwh_daily - new_kwh_daily
+        daily_savings = savings_kwh * self.rates["electricity_kwh"]
+        
+        return CostSavings(
+            daily_savings=round(daily_savings, 2),
+            monthly_savings=round(daily_savings * 30, 2),
+            annual_savings=round(daily_savings * 365, 2),
+            lifetime_savings=round(daily_savings * 365 * 12, 2),
+            description=f"Upgrading {current_age_years}-year-old {appliance_type} to Energy Star model"
+        )
+    
+    def calculate_subscription_savings(
+        self,
+        service_type: str = "streaming",
+        current_subscriptions: int = 5,
+        reduced_subscriptions: int = 2
+    ) -> CostSavings:
+        """
+        Calculate savings from reducing subscriptions (also reduces e-waste and energy).
+        
+        Args:
+            service_type: Type of subscription service
+            current_subscriptions: Number of current subscriptions
+            reduced_subscriptions: Number of subscriptions to keep
+            
+        Returns:
+            CostSavings object
+        """
+        subscription_costs = {
+            "streaming": 15.0,
+            "gaming": 12.0,
+            "music": 10.0,
+            "news": 15.0,
+            "fitness": 30.0,
+            "cloud_storage": 10.0,
+            "software": 20.0,
+            "delivery": 15.0,
+        }
+        
+        monthly_cost = subscription_costs.get(service_type, 15.0)
+        cancelled = current_subscriptions - reduced_subscriptions
+        monthly_savings = monthly_cost * cancelled
+        daily_savings = monthly_savings / 30
+        
+        return CostSavings(
+            daily_savings=round(daily_savings, 2),
+            monthly_savings=round(monthly_savings, 2),
+            annual_savings=round(monthly_savings * 12, 2),
+            lifetime_savings=round(monthly_savings * 12 * 5, 2),
+            description=f"Cancelling {cancelled} {service_type} subscriptions"
+        )
+
     def calculate_investment_roi(
         self,
         investment_type: InvestmentType,
