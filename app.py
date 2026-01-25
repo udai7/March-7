@@ -54,6 +54,16 @@ def initialize_agent() -> Optional[CO2ReductionAgent]:
         embedding_model=config.EMBEDDING_MODEL
     )
     
+    # Auto-initialize vector store if empty (useful for fresh deployments)
+    try:
+        stats = vector_store.get_collection_stats()
+        if stats.get('document_count', 0) == 0:
+            from scripts.init_vector_store import initialize_vector_store
+            print("Vector store empty. Initializing knowledge base...")
+            initialize_vector_store(interactive=False)
+    except Exception as e:
+        print(f"Vector store check failed: {e}. Skipping auto-initialization.")
+    
     # Initialize reference data manager
     reference_manager = ReferenceDataManager(
         filepath=config.REFERENCE_DATA_PATH

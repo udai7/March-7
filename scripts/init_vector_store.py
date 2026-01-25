@@ -79,7 +79,8 @@ def parse_sustainability_tips(filepath: str) -> list[Document]:
 def initialize_vector_store(
     tips_path: str = None,
     persist_dir: str = None,
-    clear_existing: bool = False
+    clear_existing: bool = False,
+    interactive: bool = True
 ) -> dict:
     """
     Initialize the vector store with sustainability tips.
@@ -88,6 +89,7 @@ def initialize_vector_store(
         tips_path: Path to sustainability tips file (uses config default if None)
         persist_dir: Directory for ChromaDB persistence (uses config default if None)
         clear_existing: Whether to clear existing collection before adding
+        interactive: Whether to ask for confirmation if data exists
         
     Returns:
         Dictionary with initialization statistics
@@ -128,12 +130,16 @@ def initialize_vector_store(
     
     if existing_count > 0:
         print(f"\nWarning: Collection already contains {existing_count} documents")
-        response = input("Do you want to clear and reinitialize? (yes/no): ")
-        if response.lower() in ['yes', 'y']:
-            vector_store.clear_collection()
-            existing_count = 0
+        if interactive:
+            response = input("Do you want to clear and reinitialize? (yes/no): ")
+            if response.lower() in ['yes', 'y']:
+                vector_store.clear_collection()
+                existing_count = 0
+            else:
+                print("Skipping initialization. Existing data preserved.")
+                return stats
         else:
-            print("Skipping initialization. Existing data preserved.")
+            print("Skipping initialization (non-interactive mode). Existing data preserved.")
             return stats
     
     # Add documents to vector store
