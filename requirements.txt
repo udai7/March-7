@@ -1,5 +1,5 @@
 # Core Dependencies
-streamlit==1.12.0
+streamlit>=1.32.0
 altair<5
 langchain==0.1.9
 langchain-community==0.0.24
@@ -15,15 +15,15 @@ groq>=0.4.0
 chromadb==0.4.22
 
 # Data Processing
-pandas==2.2.0
-numpy==1.26.3
+pandas>=2.2.0
+numpy>=1.24.0
 openpyxl==3.1.2
 
 # Image Processing (for Receipt Scanner)
 Pillow>=10.0.0
 
 # Validation and Models
-pydantic==2.6.1
+pydantic>=2.10.0
 
 # Utilities
 python-dotenv==1.0.1
