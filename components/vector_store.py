@@ -1,13 +1,15 @@
 """
-Vector store wrapper for ChromaDB to manage embeddings and semantic search.
+Lightweight Vector store replacement using TF-IDF and Scikit-learn.
+Removes dependency on ChromaDB, Torch, and other heavy libraries.
 """
 
 from typing import List, Dict, Any, Optional
-import chromadb
-from chromadb.config import Settings
-from chromadb.utils import embedding_functions
+import numpy as np
 import uuid
-
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+import pickle
+import os
 
 class Document:
     """Represents a document with content and metadata."""
@@ -18,20 +20,12 @@ class Document:
         metadata: Optional[Dict[str, Any]] = None,
         doc_id: Optional[str] = None
     ):
-        """
-        Initialize a document.
-        
-        Args:
-            content: The text content of the document
-            metadata: Optional metadata dictionary
-            doc_id: Optional document ID (generated if not provided)
-        """
         self.id = doc_id or str(uuid.uuid4())
         self.content = content
         self.metadata = metadata or {}
+        self.score = 0.0
     
     def to_dict(self) -> Dict[str, Any]:
-        """Convert document to dictionary representation."""
         return {
             "id": self.id,
             "content": self.content,
@@ -41,285 +35,100 @@ class Document:
 
 class VectorStore:
     """
-    Wrapper for ChromaDB vector database with persistent storage.
-    Manages document storage, retrieval, and semantic search.
+    Lightweight replacement for ChromaDB.
+    Uses TF-IDF + Cosine Similarity for semantic search.
+    Very fast and has zero heavy dependencies.
     """
     
     def __init__(
         self, 
         collection_name: str = "sustainability_tips",
-        persist_directory: str = "./chroma_db",
-        embedding_model: str = "all-MiniLM-L6-v2"
+        persist_directory: str = "./lean_db",
+        embedding_model: str = "tfidf"
     ):
-        """
-        Initialize the vector store with ChromaDB.
-        
-        Args:
-            collection_name: Name of the collection to use
-            persist_directory: Directory for persistent storage
-            embedding_model: Name of the embedding model
-        """
         self.collection_name = collection_name
         self.persist_directory = persist_directory
+        self.documents: List[Document] = []
+        self.vectorizer = TfidfVectorizer(stop_words='english')
+        self.tfidf_matrix = None
         
-        # Initialize ChromaDB client with persistent storage
-        self.client = chromadb.PersistentClient(
-            path=persist_directory,
-            settings=Settings(
-                anonymized_telemetry=False,
-                allow_reset=True
-            )
-        )
+        if not os.path.exists(persist_directory):
+            os.makedirs(persist_directory)
         
-        # Create or get collection with embedding function
-        try:
-            # Try to use SentenceTransformer embedding function
-            self.embedding_function = embedding_functions.SentenceTransformerEmbeddingFunction(
-                model_name=embedding_model
-            )
-        except Exception as e:
-            # Fallback to default embedding function if sentence_transformers not available
-            print(f"Warning: Could not load SentenceTransformer, using default embeddings: {e}")
-            self.embedding_function = embedding_functions.DefaultEmbeddingFunction()
-        
-        self.collection = self.client.get_or_create_collection(
-            name=collection_name,
-            embedding_function=self.embedding_function,
-            metadata={"description": "Sustainability tips and recommendations"}
-        )
-    
-    def add_documents(
-        self, 
-        documents: List[Document],
-        batch_size: int = 100
-    ) -> None:
-        """
-        Add documents to the vector store with embeddings.
-        
-        Args:
-            documents: List of Document objects to add
-            batch_size: Number of documents to process in each batch
-        """
-        if not documents:
+        self.load()
+
+    def add_documents(self, documents: List[Document]) -> None:
+        """Add documents and update the search index."""
+        self.documents.extend(documents)
+        self._update_index()
+        self.save()
+
+    def _update_index(self):
+        """Re-calculate the TF-IDF matrix."""
+        if not self.documents:
             return
-        
-        # Process in batches for efficiency
-        for i in range(0, len(documents), batch_size):
-            batch = documents[i:i + batch_size]
-            
-            ids = [doc.id for doc in batch]
-            contents = [doc.content for doc in batch]
-            metadatas = [doc.metadata for doc in batch]
-            
-            # ChromaDB will automatically generate embeddings
-            self.collection.add(
-                ids=ids,
-                documents=contents,
-                metadatas=metadatas
-            )
-    
-    def search(
-        self, 
-        query: str, 
-        k: int = 5,
-        filter_metadata: Optional[Dict[str, Any]] = None
-    ) -> List[Document]:
-        """
-        Perform semantic similarity search for relevant documents.
-        
-        Args:
-            query: Search query text
-            k: Number of top results to return
-            filter_metadata: Optional metadata filters (e.g., {"category": "Transport"})
-            
-        Returns:
-            List of Document objects ranked by relevance with similarity scores
-        """
-        if not query or not query.strip():
+        contents = [doc.content for doc in self.documents]
+        self.tfidf_matrix = self.vectorizer.fit_transform(contents)
+
+    def search(self, query: str, k: int = 5, filter_metadata: Optional[Dict[str, Any]] = None) -> List[Document]:
+        """Perform similarity search using TF-IDF."""
+        if not self.documents or not query:
             return []
-        
-        # Perform similarity search
-        results = self.collection.query(
-            query_texts=[query],
-            n_results=k,
-            where=filter_metadata,
-            include=["documents", "metadatas", "distances"]
-        )
-        
-        # Convert results to Document objects with similarity scores
-        documents = []
-        if results and results['ids'] and results['ids'][0]:
-            for i in range(len(results['ids'][0])):
-                doc = Document(
-                    content=results['documents'][0][i],
-                    metadata=results['metadatas'][0][i] if results['metadatas'] else {},
-                    doc_id=results['ids'][0][i]
-                )
-                # ChromaDB returns distances (lower is better), convert to similarity (higher is better)
-                # Distance is L2 distance, convert to similarity score between 0 and 1
-                if results.get('distances') and results['distances'][0]:
-                    distance = results['distances'][0][i]
-                    # Convert distance to similarity: similarity = 1 / (1 + distance)
-                    doc.score = 1.0 / (1.0 + distance)
-                else:
-                    doc.score = 0.5  # Default if no distance available
-                
-                documents.append(doc)
-        
-        return documents
-    
-    def search_with_filters(
-        self,
-        query: str,
-        k: int = 5,
-        category: Optional[str] = None,
-        cost_category: Optional[str] = None,
-        difficulty: Optional[str] = None,
-        timeframe: Optional[str] = None,
-        min_reduction: Optional[float] = None
-    ) -> List[Document]:
-        """
-        Advanced search with multiple filter options.
-        
-        Args:
-            query: Search query text
-            k: Number of top results to return
-            category: Filter by category (Transport, Household, Food, Lifestyle)
-            cost_category: Filter by cost (low, medium, high)
-            difficulty: Filter by difficulty (Easy, Medium, Hard)
-            timeframe: Filter by timeframe (Immediate, Short-term, Long-term)
-            min_reduction: Minimum emission reduction percentage
             
-        Returns:
-            Filtered and ranked documents
-        """
-        where_clause = {}
-        
-        # Build where clause based on filters
-        if category:
-            where_clause["category"] = category
-        
-        if cost_category:
-            where_clause["cost_category"] = cost_category
-        
-        if difficulty:
-            where_clause["difficulty"] = difficulty
-        
-        if timeframe:
-            where_clause["timeframe"] = timeframe
-        
-        # Perform search with filters
-        documents = self.search(query, k=k*2, filter_metadata=where_clause if where_clause else None)
-        
-        # Post-filter by reduction percentage if specified
-        if min_reduction is not None:
-            documents = [
-                doc for doc in documents
-                if doc.metadata.get('reduction_percentage', 0) >= min_reduction
-            ]
-        
-        return documents[:k]
-    
-    def get_by_category(self, category: str, k: int = 10) -> List[Document]:
-        """
-        Get all documents in a specific category.
-        
-        Args:
-            category: Category name
-            k: Maximum number of results
+        if self.tfidf_matrix is None:
+            self._update_index()
             
-        Returns:
-            Documents in the category
-        """
-        results = self.collection.get(
-            where={"category": category},
-            limit=k,
-            include=["documents", "metadatas"]
-        )
+        query_vec = self.vectorizer.transform([query])
+        similarities = cosine_similarity(query_vec, self.tfidf_matrix).flatten()
         
-        documents = []
-        if results and results['ids']:
-            for i in range(len(results['ids'])):
-                doc = Document(
-                    content=results['documents'][i],
-                    metadata=results['metadatas'][i] if results['metadatas'] else {},
-                    doc_id=results['ids'][i]
-                )
-                documents.append(doc)
-        
-        return documents
-    
-    def update_document(
-        self, 
-        doc_id: str, 
-        document: Document
-    ) -> None:
-        """
-        Update an existing document in the vector store.
-        
-        Args:
-            doc_id: ID of the document to update
-            document: New document data
-        """
-        self.collection.update(
-            ids=[doc_id],
-            documents=[document.content],
-            metadatas=[document.metadata]
-        )
-    
-    def delete_document(self, doc_id: str) -> None:
-        """
-        Delete a document from the vector store.
-        
-        Args:
-            doc_id: ID of the document to delete
-        """
-        self.collection.delete(ids=[doc_id])
-    
+        # Combine with indices and sort
+        results = []
+        for idx, score in enumerate(similarities):
+            # Apply metadata filters if any
+            if filter_metadata:
+                match = True
+                for key, val in filter_metadata.items():
+                    if self.documents[idx].metadata.get(key) != val:
+                        match = False
+                        break
+                if not match:
+                    continue
+            
+            doc = self.documents[idx]
+            doc.score = float(score)
+            results.append(doc)
+            
+        # Sort by score descending
+        results.sort(key=lambda x: x.score, reverse=True)
+        return results[:k]
+
+    def search_with_filters(self, query: str, k: int = 5, **filters) -> List[Document]:
+        """Mimics the original search_with_filters but lightweight."""
+        clean_filters = {k: v for k, v in filters.items() if v is not None}
+        return self.search(query, k=k, filter_metadata=clean_filters)
+
     def get_collection_stats(self) -> Dict[str, Any]:
-        """
-        Get statistics about the collection.
-        
-        Returns:
-            Dictionary with collection statistics
-        """
-        count = self.collection.count()
-        metadata = self.collection.metadata
-        
         return {
             "collection_name": self.collection_name,
-            "document_count": count,
-            "persist_directory": self.persist_directory,
-            "metadata": metadata
+            "document_count": len(self.documents),
+            "persist_directory": self.persist_directory
         }
-    
+
     def clear_collection(self) -> None:
-        """Clear all documents from the collection."""
-        # Delete the collection and recreate it
-        self.client.delete_collection(name=self.collection_name)
-        self.collection = self.client.get_or_create_collection(
-            name=self.collection_name,
-            embedding_function=self.embedding_function,
-            metadata={"description": "Sustainability tips and recommendations"}
-        )
-    
-    def get_document_by_id(self, doc_id: str) -> Optional[Document]:
-        """
-        Retrieve a specific document by ID.
-        
-        Args:
-            doc_id: ID of the document to retrieve
-            
-        Returns:
-            Document object if found, None otherwise
-        """
-        results = self.collection.get(ids=[doc_id])
-        
-        if results and results['ids']:
-            return Document(
-                content=results['documents'][0],
-                metadata=results['metadatas'][0] if results['metadatas'] else {},
-                doc_id=results['ids'][0]
-            )
-        
-        return None
+        self.documents = []
+        self.tfidf_matrix = None
+        self.save()
+
+    def save(self):
+        """Save the documents to disk."""
+        path = os.path.join(self.persist_directory, f"{self.collection_name}.pkl")
+        with open(path, 'wb') as f:
+            pickle.dump(self.documents, f)
+
+    def load(self):
+        """Load documents from disk."""
+        path = os.path.join(self.persist_directory, f"{self.collection_name}.pkl")
+        if os.path.exists(path):
+            with open(path, 'rb') as f:
+                self.documents = pickle.load(f)
+                self._update_index()

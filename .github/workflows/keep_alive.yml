@@ -1,0 +1,15 @@
+name: Keep Streamlit App Awake
+
+on:
+  schedule:
+    # Run every 30 minutes to prevent Streamlit Community Cloud from putting the app to sleep
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Streamlit App
+        # Replace <YOUR_APP_URL> with your actual deployed Streamlit URL
+        run: curl -s https://environmental-dashboard-demo.streamlit.app > /dev/null

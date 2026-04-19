@@ -4,26 +4,19 @@ altair<5
 langchain==0.1.9
 langchain-community==0.0.24
 
-# LLM and Embeddings
-sentence-transformers>=2.5.0
-torch>=2.1.0
-ollama==0.1.6
-huggingface-hub>=0.20.0,<1.0
+# LLM 
 groq>=0.4.0
 
-# Vector Database
-chromadb==0.4.22
+# Lightweight Local Retrieval (Replaces ChromaDB + Torch)
+# No Torch, No CUDA, No OpenTelemetry
+scikit-learn
+numpy>=1.24.0
 
 # Data Processing
 pandas>=2.2.0
-numpy>=1.24.0
 openpyxl==3.1.2
-
-# Image Processing (for Receipt Scanner)
 Pillow>=10.0.0
 
-# Validation and Models
-pydantic>=2.10.0
-
 # Utilities
+pydantic>=2.10.0
 python-dotenv==1.0.1

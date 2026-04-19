@@ -77,6 +77,7 @@ CRITICAL INSTRUCTIONS - ACCURACY REQUIREMENTS:
 9. List 2-4 co-benefits (health, financial savings, time, comfort, water savings, etc.)
 10. If data is insufficient, state "Limited data available" instead of guessing
 11. NEVER make up emission values - use only the provided alternatives
+12. STRICTLY DO NOT USE EMOJIS in the output. Keep the language professional and clean.
 
 RESPONSE FORMAT (strictly follow):
 

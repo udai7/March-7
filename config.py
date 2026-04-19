@@ -56,7 +56,7 @@ GRADE_THRESHOLDS = {
 
 # UI Settings
 PAGE_TITLE = "Environmental Impact AI Agent"
-PAGE_ICON = "🌍"
+PAGE_ICON = ""
 MAX_UPLOAD_SIZE_MB = 10
 
 # Visualization Settings
