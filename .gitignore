@@ -25,6 +25,7 @@ wheels/
 
 # Virtual environments
 venv/
+.venv/
 ENV/
 env/
 
@@ -41,6 +42,7 @@ logs/
 
 # Database
 chroma_db/
+chroma_db_test/
 *.db
 *.sqlite
 

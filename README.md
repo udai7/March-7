@@ -195,11 +195,12 @@ Each recommendation includes:
 ## Project Structure
 
 ```
-co2-reduction-ai-agent/
+March-7/
 ├── app.py                      # Streamlit application entry point
 ├── config.py                   # Configuration settings
 ├── requirements.txt            # Python dependencies
-├── setup.bat / setup.sh        # Setup scripts
+├── streamlit.conf              # Nginx reverse-proxy config (deployment)
+├── deploy.tar.gz               # Prebuilt deployment bundle
 ├── components/                 # Core application components
 │   ├── agent.py               # Main agent orchestration
 │   ├── llm_client.py          # LLM integration
@@ -207,29 +208,42 @@ co2-reduction-ai-agent/
 │   ├── embeddings.py          # Embedding generation
 │   ├── query_processor.py     # Query parsing
 │   ├── dataset_analyzer.py    # Dataset analysis
-│   ├── recommendation_generator.py
-│   ├── emission_calculator.py
-│   ├── data_validator.py
-│   ├── reference_data.py
-│   ├── knowledge_loader.py
-│   ├── prompt_templates.py
-│   ├── response_parser.py
-│   ├── environmental_scorer.py  # Sustainability scoring
-│   ├── financial_calculator.py  # ROI & cost savings
-│   └── receipt_scanner.py       # Receipt/product analysis
+│   ├── recommendation_generator.py  # Recommendation generation
+│   ├── recommendation_ranker.py     # Recommendation ranking
+│   ├── emission_calculator.py       # CO₂ calculations
+│   ├── data_validator.py            # Input validation
+│   ├── response_validator.py        # LLM response validation
+│   ├── response_parser.py           # Response parsing
+│   ├── reference_data.py            # Reference emission factors
+│   ├── knowledge_loader.py          # Knowledge base loader
+│   ├── prompt_templates.py          # LLM prompt templates
+│   ├── context_manager.py           # Conversation context
+│   ├── feedback_collector.py        # User feedback capture
+│   ├── environmental_scorer.py      # Sustainability scoring
+│   ├── financial_calculator.py      # ROI & cost savings
+│   ├── receipt_scanner.py           # Receipt/product analysis
+│   └── example_queries.txt          # Sample queries
 ├── models/                     # Data models
 │   └── data_models.py         # Pydantic models
 ├── data/                       # Data files
 │   ├── reference_activities.csv
 │   ├── sustainability_tips.txt
-│   └── example_queries.txt
+│   ├── environmental_sustainability_tips.txt
+│   └── sample_emissions.csv    # Example upload dataset
 ├── scripts/                    # Utility scripts
 │   ├── init_vector_store.py
+│   ├── update_reference_data.py
 │   └── verify_setup.py
 ├── utils/                      # Utility modules
 │   ├── logger.py
 │   └── error_handler.py
-└── chroma_db/                  # Vector database storage
+├── tests/                      # Test suite
+│   └── test_recommendations.py
+├── docs/                       # Documentation
+│   └── USER_GUIDE.md
+├── .github/workflows/          # CI / keep-alive workflows
+├── .streamlit/                 # Streamlit theme & server config
+└── chroma_db/                  # Vector database storage (gitignored)
 ```
 
 ## 🔧 Common Issues & Fixes
@@ -248,8 +262,6 @@ co2-reduction-ai-agent/
 
 ## 📚 Additional Resources
 
-- **[RAG Flow Diagram](RAG_FLOW_DIAGRAM.md)** - Visual explanation of the retrieval pipeline
-- **[System Design](SYSTEM_DESIGN_DOCUMENTATION.md)** - Architecture & technical deep-dive
 - **[User Guide](docs/USER_GUIDE.md)** - Detailed usage instructions
 
 ---
