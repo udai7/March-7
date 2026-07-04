@@ -5,10 +5,10 @@ Knowledge base loader for parsing and loading sustainability tips into vector st
 from __future__ import annotations
 import re
 from typing import List, Dict, Any, Optional, TYPE_CHECKING
-from components.vector_store import VectorStore, Document
+from march7.components.vector_store import VectorStore, Document
 
 if TYPE_CHECKING:
-    from components.embeddings import EmbeddingGenerator
+    from march7.components.embeddings import EmbeddingGenerator
 
 
 def parse_sustainability_tips(filepath: str) -> List[Dict[str, Any]]:

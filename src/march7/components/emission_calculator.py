@@ -6,7 +6,7 @@ as well as emission reductions from alternative activities.
 """
 
 from typing import List
-from models.data_models import Activity, ReductionMetrics
+from march7.models.data_models import Activity, ReductionMetrics
 
 
 class EmissionCalculator:

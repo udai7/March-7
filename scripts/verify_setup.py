@@ -9,7 +9,7 @@ import sys
 from pathlib import Path
 
 # Add parent directory to path
-sys.path.insert(0, str(Path(__file__).parent.parent))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 
 def check_python_version():
@@ -47,7 +47,7 @@ def check_dependencies():
 
 def check_data_files():
     """Check if required data files exist"""
-    import config
+    from march7 import config
     
     required_files = [
         (config.REFERENCE_DATA_PATH, "Reference activities CSV"),
@@ -69,8 +69,8 @@ def check_data_files():
 def check_vector_store():
     """Check if vector store is initialized"""
     try:
-        from components.vector_store import VectorStore
-        import config
+        from march7.components.vector_store import VectorStore
+        from march7 import config
         
         vector_store = VectorStore(
             collection_name="sustainability_tips",

@@ -1,0 +1,15 @@
+venv
+.venv
+__pycache__
+*.pyc
+.git
+.github
+.devcontainer
+chroma_db_test
+deploy.tar.gz
+*.log
+tests
+.env
+*.egg-info
+build
+dist

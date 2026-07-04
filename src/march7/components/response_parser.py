@@ -3,7 +3,7 @@ Response parser for extracting structured data from LLM outputs
 """
 import re
 from typing import List, Optional, Dict, Any
-from models.data_models import Recommendation
+from march7.models.data_models import Recommendation
 
 
 class ResponseParser:

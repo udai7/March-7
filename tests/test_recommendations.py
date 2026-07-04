@@ -5,9 +5,9 @@ Tests emission calculations, recommendation ranking, and validation logic.
 """
 
 import pytest
-from components.response_validator import ResponseValidator
-from components.recommendation_ranker import RecommendationRanker, RankingWeights
-from components.context_manager import UserContext, ContextAwareRecommender, Budget, Lifestyle, Timeframe
+from march7.components.response_validator import ResponseValidator
+from march7.components.recommendation_ranker import RecommendationRanker, RankingWeights
+from march7.components.context_manager import UserContext, ContextAwareRecommender, Budget, Lifestyle, Timeframe
 
 
 class TestResponseValidator:

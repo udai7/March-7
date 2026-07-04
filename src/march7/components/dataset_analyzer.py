@@ -7,11 +7,11 @@ CO2 emission datasets.
 
 import pandas as pd
 from typing import List, Dict, Any
-from models.data_models import (
+from march7.models.data_models import (
     Activity, Category, DatasetAnalysis, ValidationResult
 )
-from components.data_validator import DataValidator
-from components.emission_calculator import EmissionCalculator
+from march7.components.data_validator import DataValidator
+from march7.components.emission_calculator import EmissionCalculator
 
 
 class DatasetAnalyzer:

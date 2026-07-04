@@ -1,138 +1,121 @@
-# Environmental Impact AI Agent 🌍
+# March7 - Environmental Impact AI Agent
 
-An intelligent AI system that helps you understand and reduce your **complete environmental footprint** through personalized, data-driven recommendations covering CO₂ emissions, water usage, energy consumption, and waste generation.
+An AI system that helps you understand and reduce your **complete environmental
+footprint** through personalized, data-driven recommendations covering CO2
+emissions, water usage, energy consumption, and waste generation.
 
-## ✨ What It Does
+## What It Does
 
-Ask questions like _"I drive 20km daily, how can I reduce my environmental impact?"_ or upload your activity data, and get:
+Ask questions like _"I drive 20km daily, how can I reduce my environmental
+impact?"_ or upload your activity data, and get:
 
-- **Comprehensive environmental analysis** across CO₂, water, energy, and waste metrics
-- **Personalized recommendations** ranked by overall environmental impact
-- **Quantified savings** in kg CO₂/day, liters water, kWh energy, and waste reduction
-- **Sustainability grades** (A+ to F) based on your environmental footprint
-- **Health & cost benefits** alongside environmental improvements
-- **Source-backed advice** from a curated sustainability knowledge base
+- Comprehensive environmental analysis across CO2, water, energy, and waste metrics
+- Personalized recommendations ranked by overall environmental impact
+- Quantified savings in kg CO2/day, liters water, kWh energy, and waste reduction
+- Sustainability grades (A+ to F) based on your environmental footprint
+- Health and cost benefits alongside environmental improvements
+- Source-backed advice from a curated sustainability knowledge base
 
-## 🎯 Key Features
+## Key Features
 
-| Feature                         | Description                                                                   |
-| ------------------------------- | ----------------------------------------------------------------------------- |
-| 🌡️ **CO₂ Tracking**             | Measure and reduce carbon emissions from all your activities                  |
-| 💧 **Water Footprint**          | Track water consumption and get water-saving recommendations                  |
-| ⚡ **Energy Analysis**          | Monitor energy usage and optimize for efficiency                              |
-| ♻️ **Waste Management**         | Reduce waste generation with practical alternatives                           |
-| 💬 **Natural Language Queries** | Ask questions in plain English, get instant AI-powered answers                |
-| 📊 **Dataset Analysis**         | Upload CSV/Excel files for comprehensive multi-metric analysis                |
-| 🤖 **RAG-Powered Intelligence** | Combines vector search + LLM reasoning for accurate, grounded recommendations |
-| 📈 **Impact Quantification**    | See precise reductions across all environmental metrics                       |
-| 🏆 **Sustainability Grading**   | Get an overall grade (A+ to F) based on your environmental performance        |
-| 🎨 **Interactive Dashboard**    | Clean Streamlit interface with multi-metric charts and visualizations         |
-| 💰 **Financial Calculator**     | Calculate cost savings, ROI on green investments, and carbon credits          |
-| 🧾 **Receipt Scanner**          | Analyze purchase receipts for environmental impact of products                |
+| Feature                     | Description                                                                   |
+| --------------------------- | ----------------------------------------------------------------------------- |
+| CO2 Tracking                | Measure and reduce carbon emissions from all your activities                  |
+| Water Footprint             | Track water consumption and get water-saving recommendations                  |
+| Energy Analysis             | Monitor energy usage and optimize for efficiency                              |
+| Waste Management            | Reduce waste generation with practical alternatives                           |
+| Natural Language Queries    | Ask questions in plain English, get instant AI-powered answers                |
+| Dataset Analysis            | Upload CSV/Excel files for comprehensive multi-metric analysis                |
+| RAG-Powered Intelligence    | Combines vector search and LLM reasoning for accurate, grounded recommendations |
+| Impact Quantification       | See precise reductions across all environmental metrics                       |
+| Sustainability Grading      | Get an overall grade (A+ to F) based on your environmental performance        |
+| Interactive Dashboard       | Clean Streamlit interface with multi-metric charts and visualizations         |
+| Financial Calculator        | Calculate cost savings, ROI on green investments, and carbon credits          |
+| Receipt Scanner             | Analyze purchase receipts for environmental impact of products                |
 
-### 💰 Financial Impact Calculator (NEW!)
+### Financial Impact Calculator
 
 Calculate the financial benefits of your eco-friendly choices:
 
-- **Cost Savings Calculator**: Calculate savings from switching transport modes, reducing energy/water usage
-- **Green Investment ROI**: Analyze payback periods and returns for solar panels, EVs, heat pumps, and more
+- **Cost Savings Calculator**: Savings from switching transport modes, reducing energy/water usage
+- **Green Investment ROI**: Payback periods and returns for solar panels, EVs, heat pumps, and more
 - **Utility Cost Comparison**: Compare current vs. optimized utility costs with detailed breakdowns
 - **Carbon Credit Calculator**: Estimate your carbon credit earnings or tax liability
 
-### 🧾 Receipt & Product Scanner (NEW!)
+### Receipt and Product Scanner
 
 Analyze your shopping to understand environmental impact:
 
 - **Receipt Text Analysis**: Paste receipt text to auto-detect products and calculate impact
 - **Manual Product Entry**: Add products individually for detailed environmental analysis
-- **Category-Based Impact**: See CO₂, water, and waste footprint by product category
+- **Category-Based Impact**: See CO2, water, and waste footprint by product category
 - **Eco Recommendations**: Get personalized suggestions for greener alternatives
 - **Sustainability Scoring**: Each product gets a 0-100 sustainability score
 
-## 📊 Environmental Metrics Tracked
+## Environmental Metrics Tracked
 
-| Metric             | Unit       | Description                                     |
-| ------------------ | ---------- | ----------------------------------------------- |
-| 🌡️ CO₂ Emissions   | kg/day     | Carbon dioxide equivalent emissions             |
-| 💧 Water Usage     | liters/day | Total water consumption including virtual water |
-| ⚡ Energy          | kWh/day    | Electricity and fuel energy consumption         |
-| 🗑️ Waste           | kg/day     | Solid waste generation                          |
-| 🏭 Pollution Index | 0-100      | Combined air/water pollution score              |
-| 🌲 Land Use        | m²         | Land area required for activities               |
+| Metric          | Unit       | Description                                     |
+| --------------- | ---------- | ----------------------------------------------- |
+| CO2 Emissions   | kg/day     | Carbon dioxide equivalent emissions             |
+| Water Usage     | liters/day | Total water consumption including virtual water |
+| Energy          | kWh/day    | Electricity and fuel energy consumption         |
+| Waste           | kg/day     | Solid waste generation                          |
+| Pollution Index | 0-100      | Combined air/water pollution score              |
+| Land Use        | m2         | Land area required for activities               |
 
-## 🚀 Quick Start (3 Steps)
+## Quick Start
 
 ### Prerequisites
 
-- Python 3.9+ installed
-- Internet connection (for Groq API) or local compute (for Ollama)
+- Python 3.10 or newer
+- Internet connection (for the Groq API) or local compute (for Ollama)
 
-### Step 1: Install Dependencies
+### 1. Install
 
 ```bash
 # Clone the repository
-git clone <repository-url>
-cd March-7
+git clone https://github.com/udai7/march7.git
+cd march7
 
-# Create virtual environment
+# Create and activate a virtual environment
 python -m venv .venv
+source .venv/bin/activate          # Windows: .venv\Scripts\activate
 
-# Activate virtual environment
-# Windows PowerShell:
-.\.venv\Scripts\Activate.ps1
-# Windows CMD:
-.venv\Scripts\activate.bat
-# Linux/Mac:
-source .venv/bin/activate
-
-# Install packages
-pip install -r requirements.txt
+# Install the project (editable, with dev extras)
+pip install -e ".[dev]"
 ```
 
-### Step 2: Initialize the System
+### 2. Configure
 
 ```bash
-# Load knowledge base into vector database
+cp .env.example .env
+# Edit .env and set GROQ_API_KEY (get a free key at https://console.groq.com)
+```
+
+### 3. Initialize and run
+
+```bash
+# Load the knowledge base into the vector store
 python scripts/init_vector_store.py
 
 # Verify setup (optional but recommended)
 python scripts/verify_setup.py
+
+# Launch the app
+streamlit run src/march7/app.py
 ```
 
-### Step 3: Configure & Run
+The app opens at `http://localhost:8501`.
 
-**Option A: Using Groq (Recommended - Fastest)**
+**Using Ollama instead of Groq (offline):** install Ollama from
+[ollama.ai](https://ollama.ai), run `ollama pull llama3`, then set
+`LLM_PROVIDER=ollama` in your `.env` before launching.
 
-1. Get a free API key from [console.groq.com](https://console.groq.com)
-2. Set your key and run:
-
-```powershell
-# PowerShell
-$env:GROQ_API_KEY="gsk_your_key_here"
-streamlit run app.py
-```
-
-**Option B: Using Ollama (Offline/Unlimited)**
-
-1. Install Ollama from [ollama.ai](https://ollama.ai)
-2. Pull a model and run:
-
-```bash
-ollama pull llama3
-streamlit run app.py
-```
-
-The app will open at `http://localhost:8501` 🎉
-
----
-
-## 💡 How to Use
+## How to Use
 
 ### Ask Questions (Natural Language)
 
-Simply type your question and get instant recommendations:
-
-**Example Questions:**
+Type a question and get instant recommendations:
 
 ```
 "I drive 20 km daily using a petrol car. How can I reduce emissions?"
@@ -142,7 +125,7 @@ Simply type your question and get instant recommendations:
 
 ### Upload Your Data (CSV/Excel)
 
-**Required Format:**
+Required format:
 
 ```csv
 Activity,Avg_CO2_Emission(kg/day),Category
@@ -151,158 +134,127 @@ Eating beef daily,3.3,Food
 Electric heating 8hrs,2.5,Household
 ```
 
-**Categories:** Transport, Household, Food, Lifestyle
+Categories: Transport, Household, Food, Lifestyle.
 
-**What You Get:**
-
-- 📊 Total daily & annual emissions
-- 🔝 Top emitting activities
-- 💡 Ranked recommendations by impact
-- 📈 Potential savings projections
+You get total daily and annual emissions, top emitting activities, ranked
+recommendations by impact, and potential savings projections.
 
 ### Understanding Results
 
 Each recommendation includes:
 
-| Field              | Meaning                                         |
-| ------------------ | ----------------------------------------------- |
-| **Action**         | What to do (e.g., "Switch to public transport") |
-| **Reduction**      | CO₂ saved per day (kg) and percentage           |
-| **Difficulty**     | Easy / Medium / Hard                            |
-| **Timeframe**      | Immediate / Short-term / Long-term              |
-| **Annual Savings** | Total kg CO₂/year if adopted                    |
+| Field          | Meaning                                         |
+| -------------- | ----------------------------------------------- |
+| Action         | What to do (e.g., "Switch to public transport") |
+| Reduction      | CO2 saved per day (kg) and percentage           |
+| Difficulty     | Easy / Medium / Hard                            |
+| Timeframe      | Immediate / Short-term / Long-term              |
+| Annual Savings | Total kg CO2/year if adopted                    |
 
----
+## Tech Stack
 
-## ⚙️ Tech Stack
+| Component      | Technology                  | Purpose                                 |
+| -------------- | --------------------------- | --------------------------------------- |
+| LLM            | Groq / Ollama / HuggingFace | Text generation and reasoning           |
+| RAG Framework  | LangChain                   | Retrieval-augmented generation pipeline |
+| Vector Search  | TF-IDF + scikit-learn       | Lightweight semantic search (no GPU)    |
+| Frontend       | Streamlit                   | Interactive web interface               |
+| Data           | Pandas, Pydantic            | Processing and validation               |
 
-| Component         | Technology                  | Purpose                                 |
-| ----------------- | --------------------------- | --------------------------------------- |
-| **LLM**           | Groq / Ollama / HuggingFace | Text generation & reasoning             |
-| **RAG Framework** | LangChain                   | Retrieval-augmented generation pipeline |
-| **Vector DB**     | ChromaDB                    | Semantic search over knowledge base     |
-| **Embeddings**    | SentenceTransformers        | Text → vector conversion                |
-| **Frontend**      | Streamlit                   | Interactive web interface               |
-| **Data**          | Pandas, Pydantic            | Processing & validation                 |
-
-**Why This Stack?**
-
-- ⚡ Fast: Sub-2s responses with Groq
-- 🔒 Private: Can run 100% offline with Ollama
-- 💰 Free: All tools have generous free tiers
-- 🧩 Modular: Easy to swap LLM providers
+The retrieval layer uses TF-IDF with cosine similarity, so the project runs
+without heavy dependencies like Torch or ChromaDB.
 
 ## Project Structure
 
 ```
-March-7/
-├── app.py                      # Streamlit application entry point
-├── config.py                   # Configuration settings
-├── requirements.txt            # Python dependencies
-├── streamlit.conf              # Nginx reverse-proxy config (deployment)
-├── deploy.tar.gz               # Prebuilt deployment bundle
-├── components/                 # Core application components
-│   ├── agent.py               # Main agent orchestration
-│   ├── llm_client.py          # LLM integration
-│   ├── vector_store.py        # ChromaDB wrapper
-│   ├── embeddings.py          # Embedding generation
-│   ├── query_processor.py     # Query parsing
-│   ├── dataset_analyzer.py    # Dataset analysis
-│   ├── recommendation_generator.py  # Recommendation generation
-│   ├── recommendation_ranker.py     # Recommendation ranking
-│   ├── emission_calculator.py       # CO₂ calculations
-│   ├── data_validator.py            # Input validation
-│   ├── response_validator.py        # LLM response validation
-│   ├── response_parser.py           # Response parsing
-│   ├── reference_data.py            # Reference emission factors
-│   ├── knowledge_loader.py          # Knowledge base loader
-│   ├── prompt_templates.py          # LLM prompt templates
-│   ├── context_manager.py           # Conversation context
-│   ├── feedback_collector.py        # User feedback capture
-│   ├── environmental_scorer.py      # Sustainability scoring
-│   ├── financial_calculator.py      # ROI & cost savings
-│   ├── receipt_scanner.py           # Receipt/product analysis
-│   └── example_queries.txt          # Sample queries
-├── models/                     # Data models
-│   └── data_models.py         # Pydantic models
-├── data/                       # Data files
-│   ├── reference_activities.csv
-│   ├── sustainability_tips.txt
-│   ├── environmental_sustainability_tips.txt
-│   └── sample_emissions.csv    # Example upload dataset
-├── scripts/                    # Utility scripts
-│   ├── init_vector_store.py
-│   ├── update_reference_data.py
-│   └── verify_setup.py
-├── utils/                      # Utility modules
-│   ├── logger.py
-│   └── error_handler.py
-├── tests/                      # Test suite
-│   └── test_recommendations.py
-├── docs/                       # Documentation
-│   └── USER_GUIDE.md
-├── .github/workflows/          # CI / keep-alive workflows
-├── .streamlit/                 # Streamlit theme & server config
-└── chroma_db/                  # Vector database storage (gitignored)
+march7/
+├── src/march7/                 # Application package
+│   ├── app.py                  # Streamlit application entry point
+│   ├── config.py               # Configuration settings
+│   ├── components/             # Core application components
+│   │   ├── agent.py            # Main agent orchestration
+│   │   ├── llm_client.py       # LLM integration
+│   │   ├── vector_store.py     # TF-IDF vector store
+│   │   ├── embeddings.py       # Embedding compatibility shim
+│   │   ├── query_processor.py  # Query parsing
+│   │   ├── dataset_analyzer.py # Dataset analysis
+│   │   ├── recommendation_generator.py
+│   │   ├── recommendation_ranker.py
+│   │   ├── emission_calculator.py
+│   │   ├── data_validator.py
+│   │   ├── response_validator.py
+│   │   ├── response_parser.py
+│   │   ├── reference_data.py
+│   │   ├── knowledge_loader.py
+│   │   ├── prompt_templates.py
+│   │   ├── context_manager.py
+│   │   ├── feedback_collector.py
+│   │   ├── environmental_scorer.py
+│   │   ├── financial_calculator.py
+│   │   └── receipt_scanner.py
+│   ├── models/                 # Pydantic data models
+│   └── utils/                  # Logging and error handling
+├── data/                       # Reference datasets and knowledge base
+├── docs/                       # Documentation (USER_GUIDE.md)
+├── scripts/                    # Setup and maintenance utilities
+├── tests/                      # Test suite (pytest)
+├── deploy/                     # Dockerfile and reverse-proxy config
+├── .streamlit/                 # Streamlit theme and server config
+├── pyproject.toml              # Packaging and tooling configuration
+├── requirements.txt            # Runtime dependencies
+├── .env.example                # Example environment configuration
+├── CONTRIBUTING.md
+└── LICENSE
 ```
 
-## 🔧 Common Issues & Fixes
+## Deployment
 
-| Problem                       | Quick Fix                                                             |
-| ----------------------------- | --------------------------------------------------------------------- |
-| 🐌 **Slow responses**         | Use Groq API (fastest): `$env:GROQ_API_KEY="your_key"`                |
-| 🔑 **"API key not provided"** | Set in same terminal: `$env:GROQ_API_KEY="gsk_..."` then run app      |
-| 🚫 **Rate limit exceeded**    | Switch to Ollama (unlimited): just run `ollama pull llama3`           |
-| ❌ **"Module not found"**     | Activate venv: `.\.venv\Scripts\Activate.ps1` then reinstall          |
-| 📁 **"ChromaDB not found"**   | Initialize: `python scripts/init_vector_store.py`                     |
-| 📊 **"Invalid file format"**  | Check CSV columns: `Activity`, `Avg_CO2_Emission(kg/day)`, `Category` |
-| 🔌 **Port already in use**    | Try different port: `streamlit run app.py --server.port 8502`         |
+A container image is defined in `deploy/Dockerfile`. Build and run from the
+repository root:
 
-**Still stuck?** Check the detailed troubleshooting in the [wiki](#) or open an issue.
+```bash
+docker build -f deploy/Dockerfile -t march7:latest .
+docker run -d --name march7 --env-file .env -p 8501:8501 march7:latest
+```
 
-## 📚 Additional Resources
+`deploy/streamlit.conf` contains a sample nginx reverse-proxy configuration for
+serving the app behind a domain with TLS.
 
-- **[User Guide](docs/USER_GUIDE.md)** - Detailed usage instructions
+## Common Issues
 
----
+| Problem                   | Fix                                                                  |
+| ------------------------- | -------------------------------------------------------------------- |
+| Slow responses            | Use the Groq provider (`LLM_PROVIDER=groq` in `.env`)                |
+| "API key not provided"    | Set `GROQ_API_KEY` in `.env`                                         |
+| Rate limit exceeded       | Switch to Ollama (`LLM_PROVIDER=ollama`, `ollama pull llama3`)       |
+| "Module not found"        | Activate the venv and run `pip install -e ".[dev]"`                  |
+| Vector store not found    | Initialize it: `python scripts/init_vector_store.py`                |
+| "Invalid file format"     | Check CSV columns: `Activity`, `Avg_CO2_Emission(kg/day)`, `Category` |
+| Port already in use       | Use another port: `streamlit run src/march7/app.py --server.port 8502` |
 
-## 🤝 Contributing
+## Testing
 
-We welcome contributions! To get started:
+```bash
+pytest
+```
 
-1. Fork the repo
-2. Create a feature branch: `git checkout -b feature/your-idea`
-3. Make changes and test thoroughly
-4. Submit a pull request with clear description
+## Additional Resources
 
----
+- [User Guide](docs/USER_GUIDE.md) - Detailed usage instructions
+- [Contributing Guide](CONTRIBUTING.md) - Development setup and conventions
 
-## 📄 License
+## Contributing
 
-[Specify your license here]
+Contributions are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for setup
+instructions and conventions. In short: fork the repo, create a feature branch,
+make and test your changes, and open a pull request with a clear description.
 
----
+## License
 
-## 🙏 Acknowledgments
+Released under the [MIT License](LICENSE).
 
-Built with powerful open-source tools:
+## Acknowledgments
 
-- **Groq** - Ultra-fast LLM inference
-- **ChromaDB** - Vector database
-- **Streamlit** - Web UI framework
-- **SentenceTransformers** - Embeddings
-- **LangChain** - RAG orchestration
-
----
-
-## 📞 Support
-
-Need help?
-
-- 📖 Check the [Common Issues](#-common-issues--fixes) section
-- 🐛 Found a bug? [Open an issue](../../issues)
-- 💬 Questions? Start a [discussion](../../discussions)
-
----
-
-**Made with 💚 for a sustainable future**
+Built with open-source tools: Groq (LLM inference), Streamlit (web UI),
+scikit-learn (vector search), LangChain (RAG orchestration), and
+Pandas/Pydantic (data processing).

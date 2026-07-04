@@ -3,7 +3,7 @@ Prompt templates for LLM interactions with enhanced accuracy constraints
 for comprehensive environmental impact analysis (CO2, water, energy, waste).
 """
 from typing import List, Dict, Any, Optional
-from models.data_models import Activity
+from march7.models.data_models import Activity
 
 
 class PromptTemplates:

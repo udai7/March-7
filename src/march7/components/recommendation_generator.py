@@ -6,9 +6,9 @@ CO2 emissions based on activities and retrieved knowledge.
 """
 
 from typing import List, Dict, Any, Optional
-from models.data_models import Activity, Recommendation, Category
-from components.reference_data import ReferenceDataManager
-from components.emission_calculator import EmissionCalculator
+from march7.models.data_models import Activity, Recommendation, Category
+from march7.components.reference_data import ReferenceDataManager
+from march7.components.emission_calculator import EmissionCalculator
 
 
 class RecommendationGenerator:

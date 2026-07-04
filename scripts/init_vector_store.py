@@ -9,11 +9,11 @@ import sys
 from pathlib import Path
 
 # Add parent directory to path to import components
-sys.path.insert(0, str(Path(__file__).parent.parent))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from components.vector_store import VectorStore, Document
-from components.embeddings import EmbeddingGenerator
-import config
+from march7.components.vector_store import VectorStore, Document
+from march7.components.embeddings import EmbeddingGenerator
+from march7 import config
 
 
 def parse_sustainability_tips(filepath: str) -> list[Document]:

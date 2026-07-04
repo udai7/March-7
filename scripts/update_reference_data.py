@@ -6,7 +6,7 @@ import sys
 from pathlib import Path
 
 # Add parent directory to path
-sys.path.append(str(Path(__file__).parent.parent))
+sys.path.append(str(Path(__file__).resolve().parents[1] / "src"))
 
 def update_reference_data():
     """Update reference activities with comprehensive environmental metrics."""

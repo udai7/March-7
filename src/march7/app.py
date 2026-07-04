@@ -9,16 +9,16 @@ analysis of CO₂, water, energy, and waste impacts.
 import streamlit as st
 import pandas as pd
 from typing import Optional, List
-import config
-from components.agent import CO2ReductionAgent
-from components.llm_client import LLMClient
-from components.vector_store import VectorStore
-from components.reference_data import ReferenceDataManager
-from components.feedback_collector import FeedbackCollector
-from components.environmental_scorer import EnvironmentalScorer
-from components.financial_calculator import FinancialCalculator, InvestmentType, CostSavings, ROIResult
-from components.receipt_scanner import ReceiptScanner, ProductCategory, ReceiptAnalysis
-from models.data_models import AgentResponse, DatasetAnalysis
+from march7 import config
+from march7.components.agent import CO2ReductionAgent
+from march7.components.llm_client import LLMClient
+from march7.components.vector_store import VectorStore
+from march7.components.reference_data import ReferenceDataManager
+from march7.components.feedback_collector import FeedbackCollector
+from march7.components.environmental_scorer import EnvironmentalScorer
+from march7.components.financial_calculator import FinancialCalculator, InvestmentType, CostSavings, ROIResult
+from march7.components.receipt_scanner import ReceiptScanner, ProductCategory, ReceiptAnalysis
+from march7.models.data_models import AgentResponse, DatasetAnalysis
 
 
 # Page configuration

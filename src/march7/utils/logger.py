@@ -5,7 +5,7 @@ import logging
 import sys
 from pathlib import Path
 from typing import Optional
-import config
+from march7 import config
 
 
 def setup_logging(
