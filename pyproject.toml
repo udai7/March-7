@@ -1,0 +1,59 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "march7"
+version = "1.0.0"
+description = "Environmental Impact AI Agent - a RAG-powered assistant for understanding and reducing your CO2, water, energy, and waste footprint."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE" }
+authors = [{ name = "March7 contributors" }]
+keywords = ["sustainability", "co2", "environment", "streamlit", "rag", "llm", "ai-agent"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Web Environment",
+    "Framework :: Streamlit",
+    "Intended Audience :: End Users/Desktop",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering",
+]
+
+dependencies = [
+    "streamlit>=1.32.0",
+    "altair<5",
+    "langchain==0.1.9",
+    "langchain-community==0.0.24",
+    "groq>=0.4.0",
+    "scikit-learn",
+    "numpy>=1.24.0",
+    "pandas>=2.2.0",
+    "openpyxl==3.1.2",
+    "Pillow>=10.0.0",
+    "pydantic>=2.10.0",
+    "python-dotenv==1.0.1",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+]
+
+[project.urls]
+Homepage = "https://march7.archilect.in"
+Repository = "https://github.com/udai7/march7"
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]

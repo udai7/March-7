@@ -8,19 +8,19 @@ environmental impact analysis (CO2, water, energy, waste, and more).
 
 import pandas as pd
 from typing import List, Optional, Dict, Any
-import config
-from models.data_models import (
+from march7 import config
+from march7.models.data_models import (
     Activity, AgentResponse, DatasetAnalysis, Recommendation, Category, EnvironmentalMetrics
 )
-from components.query_processor import QueryProcessor, QueryIntent
-from components.dataset_analyzer import DatasetAnalyzer
-from components.recommendation_generator import RecommendationGenerator
-from components.llm_client import LLMClient
-from components.vector_store import VectorStore, Document
-from components.reference_data import ReferenceDataManager
-from components.prompt_templates import PromptTemplates
-from components.response_parser import ResponseParser, parse_llm_response
-from components.environmental_scorer import EnvironmentalScorer
+from march7.components.query_processor import QueryProcessor, QueryIntent
+from march7.components.dataset_analyzer import DatasetAnalyzer
+from march7.components.recommendation_generator import RecommendationGenerator
+from march7.components.llm_client import LLMClient
+from march7.components.vector_store import VectorStore, Document
+from march7.components.reference_data import ReferenceDataManager
+from march7.components.prompt_templates import PromptTemplates
+from march7.components.response_parser import ResponseParser, parse_llm_response
+from march7.components.environmental_scorer import EnvironmentalScorer
 
 
 class CO2ReductionAgent:
@@ -555,7 +555,7 @@ Based on the following sustainability knowledge, provide 3-5 specific, actionabl
         Returns:
             List of relevant documents above threshold
         """
-        import config
+        from march7 import config
         
         if not docs:
             return []

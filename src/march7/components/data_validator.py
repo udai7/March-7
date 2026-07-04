@@ -8,7 +8,7 @@ the integrity of user-uploaded activity datasets.
 import pandas as pd
 import numpy as np
 from typing import List, Set
-from models.data_models import ValidationResult, Category
+from march7.models.data_models import ValidationResult, Category
 
 
 class DataValidator:

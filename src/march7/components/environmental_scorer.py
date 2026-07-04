@@ -6,7 +6,7 @@ and assigns sustainability grades based on multiple metrics.
 """
 
 from typing import Dict, Tuple
-import config
+from march7 import config
 
 
 class EnvironmentalScorer:

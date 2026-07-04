@@ -4,7 +4,7 @@ LLM Client abstraction for interacting with Ollama API or Hugging Face Inference
 import requests
 import time
 from typing import List, Optional, Dict, Any
-import config
+from march7 import config
 
 # Import HF Inference Client
 try:

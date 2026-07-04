@@ -9,9 +9,11 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Base paths
-BASE_DIR = Path(__file__).parent
-DATA_DIR = BASE_DIR / "data"
-CHROMA_DIR = BASE_DIR / "chroma_db"
+# config.py lives at src/march7/config.py, so the project root is three levels up.
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+BASE_DIR = PROJECT_ROOT
+DATA_DIR = PROJECT_ROOT / "data"
+CHROMA_DIR = PROJECT_ROOT / "chroma_db"
 
 # LLM Settings
 LLM_PROVIDER = os.getenv("LLM_PROVIDER", "groq")  # "ollama", "huggingface", or "groq" (fastest!)

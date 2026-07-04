@@ -50,6 +50,10 @@ chroma_db_test/
 .DS_Store
 Thumbs.db
 
+# Tooling / local
+.pytest_cache/
+.claude/
+
 # Environment variables
 .env
 
